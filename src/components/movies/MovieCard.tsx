@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Clock, Play, Star } from "lucide-react";
+import { Clock, Heart, Play, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -10,9 +10,16 @@ import type { EnrichedRecommendation } from "@/types/movie";
 interface MovieCardProps {
   movie: EnrichedRecommendation;
   index: number;
+  isFavorite: boolean;
+  onToggleFavorite: (movieId: number) => void;
 }
 
-export function MovieCard({ movie, index }: MovieCardProps) {
+export function MovieCard({
+  movie,
+  index,
+  isFavorite,
+  onToggleFavorite,
+}: MovieCardProps) {
   const [posterLoaded, setPosterLoaded] = useState(false);
   const [trailerOpen, setTrailerOpen] = useState(false);
   const year = movie.release_date?.slice(0, 4) ?? "—";
@@ -23,7 +30,8 @@ export function MovieCard({ movie, index }: MovieCardProps) {
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: index * 0.1, duration: 0.45, ease: "easeOut" }}
-        className="glass rounded-xl overflow-hidden group hover:border-cinema-gold/30 transition-colors duration-300"
+        whileHover={{ y: -4 }}
+        className="glass rounded-3xl overflow-hidden border border-white/5 shadow-2xl shadow-black/10 transition-all duration-300 hover:border-cinema-gold/30 hover:shadow-black/15"
       >
         <div className="flex flex-col sm:flex-row">
           {/* Poster */}
@@ -52,6 +60,14 @@ export function MovieCard({ movie, index }: MovieCardProps) {
               <Star className="h-3 w-3 fill-current" />
               {movie.vote_average.toFixed(1)}
             </Badge>
+            <button
+              type="button"
+              onClick={() => onToggleFavorite(movie.id)}
+              className="absolute left-2 top-2 rounded-full bg-background/80 p-2 text-cinema-gold shadow-lg shadow-black/20 transition hover:bg-cinema-gold/15"
+              aria-label={isFavorite ? "Remove favorite" : "Add favorite"}
+            >
+              <Heart className={`h-4 w-4 ${isFavorite ? "fill-current text-cinema-gold" : "text-white/80"}`} />
+            </button>
           </div>
 
           {/* Content */}

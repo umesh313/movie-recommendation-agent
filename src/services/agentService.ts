@@ -4,7 +4,12 @@ import type {
   ExtractedPreferences,
   MovieSummary,
 } from "@/types/movie";
-import { getGenres, keywordMatchGenres, matchGenreNames } from "./tmdb";
+import {
+  getGenres,
+  keywordMatchGenres,
+  matchGenreNames,
+  searchMovies,
+} from "./tmdb";
 
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 const MODEL = "llama-3.3-70b-versatile";
@@ -184,6 +189,56 @@ Rules:
   }
 
   return response;
+}
+
+export function isQuoteOrMovieFactRequest(message: string): boolean {
+  const lower = message.toLowerCase();
+  return [
+    "quote",
+    "line",
+    "dialogue",
+    "what did",
+    "famous line",
+    "say",
+    "say in",
+    "said",
+    "dialogue from",
+    "memorable line",
+    "movie quote",
+  ].some((term) => lower.includes(term));
+}
+
+export async function answerMovieQuestion(
+  userMessage: string
+): Promise<AgentResponse> {
+  const match = userMessage.match(/from\s+"([^"]+)"|from\s+([^\?]+)/i);
+  const searchQuery = match?.[1] || match?.[2] || undefined;
+  let movie = null;
+
+  if (searchQuery) {
+    const results = await searchMovies(searchQuery.trim());
+    movie = results[0] ?? null;
+  }
+
+  const movieInfo = movie
+    ? `Movie title: "${movie.title}"\nOverview: ${movie.overview}`
+    : "No exact movie was identified from the query.";
+
+  const systemPrompt = `You are CineMatch, a movie expert that answers quote and movie trivia questions honestly. Use the user request and movie information to answer clearly. If the user asks for a quote, provide the quote only when you can be confident in it. If you cannot verify an exact quote, say you could not confirm the exact line and share a memorable fact or context about the film instead.`;
+
+  const raw = await callGroq(
+    [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: `User request: "${userMessage}"\n${movieInfo}` },
+    ],
+    0.35,
+    450
+  );
+
+  return {
+    intro: raw,
+    recommendations: [],
+  };
 }
 
 export async function getFallbackRecommendations(

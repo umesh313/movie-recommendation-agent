@@ -13,7 +13,11 @@ function App() {
     error,
     loading,
     apiKeys,
+    history,
+    favoriteIds,
     sendMessage,
+    clearHistory,
+    toggleFavorite,
     reset,
   } = useMovieAgent();
 
@@ -72,7 +76,10 @@ function App() {
               loading={loading}
               status={status}
               statusLabel={statusLabel}
+              history={history}
               onSend={sendMessage}
+              onHistorySelect={sendMessage}
+              onClearHistory={clearHistory}
               apiKeysMissing={apiKeysMissing}
             />
           </div>
@@ -80,6 +87,8 @@ function App() {
           <div className="lg:col-span-3 pb-8">
             <MovieGrid
               recommendations={recommendations}
+              favoriteIds={favoriteIds}
+              onToggleFavorite={toggleFavorite}
               loading={loading && recommendations.length === 0}
             />
           </div>

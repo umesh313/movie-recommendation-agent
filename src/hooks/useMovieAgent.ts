@@ -1,8 +1,10 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
+  answerMovieQuestion,
   checkApiKeys,
   extractPreferences,
   getFallbackRecommendations,
+  isQuoteOrMovieFactRequest,
   recommendMovies,
 } from "@/services/agentService";
 import {
@@ -28,6 +30,8 @@ export function useMovieAgent() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     { role: "assistant", content: WELCOME },
   ]);
+  const [history, setHistory] = useState<string[]>([]);
+  const [favoriteIds, setFavoriteIds] = useState<number[]>([]);
   const [status, setStatus] = useState<AgentStatus>("idle");
   const [statusLabel, setStatusLabel] = useState("");
   const [recommendations, setRecommendations] = useState<EnrichedRecommendation[]>([]);
@@ -51,15 +55,35 @@ export function useMovieAgent() {
     setLoading(true);
     setRecommendations([]);
     setMessages((m) => [...m, { role: "user", content: trimmed }]);
+    setHistory((prev) => {
+      const next = [trimmed, ...prev.filter((item) => item !== trimmed)].slice(0, 10);
+      window.localStorage.setItem("cineMatch_history", JSON.stringify(next));
+      return next;
+    });
 
     try {
+      if (await isQuoteOrMovieFactRequest(trimmed)) {
+        setStatus("extracting");
+        setStatusLabel("Searching movie knowledge…");
+        const answer = await answerMovieQuestion(trimmed);
+
+        setMessages((m) => [
+          ...m,
+          { role: "assistant", content: answer.intro },
+        ]);
+        setRecommendations([]);
+        setStatus("done");
+        setStatusLabel("");
+        return;
+      }
+
       setStatus("extracting");
       setStatusLabel("Understanding your taste…");
       const preferences: ExtractedPreferences = await extractPreferences(trimmed);
 
       setStatus("searching");
       setStatusLabel("Searching TMDB…");
-      let candidates = await fetchCandidates(trimmed, preferences);
+      let candidates = await fetchCandidates(preferences);
 
       if (candidates.length === 0) {
         candidates = await discoverByGenre([], undefined, undefined);
@@ -78,7 +102,7 @@ export function useMovieAgent() {
 
       setStatus("enriching");
       setStatusLabel("Loading posters & trailers…");
-      const enriched = await enrichRecommendations(agentResponse.recommendations);
+      const enriched = await enrichRecommendations(agentResponse.recommendations ?? []);
 
       setRecommendations(enriched);
       setMessages((m) => [
@@ -101,6 +125,21 @@ export function useMovieAgent() {
     }
   }, [loading, apiKeys.tmdb, apiKeys.groq]);
 
+  const clearHistory = useCallback(() => {
+    setHistory([]);
+    window.localStorage.removeItem("cineMatch_history");
+  }, []);
+
+  const toggleFavorite = useCallback((movieId: number) => {
+    setFavoriteIds((prev) => {
+      const next = prev.includes(movieId)
+        ? prev.filter((id) => id !== movieId)
+        : [...prev, movieId];
+      window.localStorage.setItem("cineMatch_favorites", JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
   const reset = useCallback(() => {
     setMessages([{ role: "assistant", content: WELCOME }]);
     setRecommendations([]);
@@ -108,6 +147,26 @@ export function useMovieAgent() {
     setStatusLabel("");
     setError(null);
     setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    const storedHistory = window.localStorage.getItem("cineMatch_history");
+    if (storedHistory) {
+      try {
+        setHistory(JSON.parse(storedHistory));
+      } catch {
+        window.localStorage.removeItem("cineMatch_history");
+      }
+    }
+
+    const storedFavorites = window.localStorage.getItem("cineMatch_favorites");
+    if (storedFavorites) {
+      try {
+        setFavoriteIds(JSON.parse(storedFavorites));
+      } catch {
+        window.localStorage.removeItem("cineMatch_favorites");
+      }
+    }
   }, []);
 
   return {
@@ -118,13 +177,16 @@ export function useMovieAgent() {
     error,
     loading,
     apiKeys,
+    history,
+    favoriteIds,
     sendMessage,
+    clearHistory,
+    toggleFavorite,
     reset,
   };
 }
 
 async function fetchCandidates(
-  userMessage: string,
   preferences: ExtractedPreferences
 ) {
   let candidates = await discoverByGenre(

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Film, Loader2, Send, Sparkles } from "lucide-react";
+import { Loader2, Send, Sparkles, History, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -17,23 +17,30 @@ const SUGGESTIONS = [
 
 interface ChatPanelProps {
   messages: ChatMessage[];
+  history: string[];
   loading: boolean;
   status: AgentStatus;
   statusLabel: string;
   onSend: (text: string) => void;
+  onHistorySelect: (text: string) => void;
+  onClearHistory: () => void;
   apiKeysMissing: boolean;
 }
 
 export function ChatPanel({
   messages,
+  history,
   loading,
   status,
   statusLabel,
   onSend,
+  onHistorySelect,
+  onClearHistory,
   apiKeysMissing,
 }: ChatPanelProps) {
   const [input, setInput] = useState("");
   const [typedText, setTypedText] = useState("");
+  const [historyOpen, setHistoryOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const lastAssistantRef = useRef<string>("");
 
@@ -78,25 +85,81 @@ export function ChatPanel({
   return (
     <div className="flex flex-col h-full glass rounded-2xl overflow-hidden">
       {/* Header */}
-      <div className="relative px-4 py-3 border-b border-white/10 bg-gradient-to-r from-cinema-gold/10 via-transparent to-cinema-amber/10">
+      <div className="relative px-4 py-4 border-b border-white/10 bg-gradient-to-r from-cinema-gold/10 via-transparent to-cinema-amber/10">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-full bg-gradient-to-br from-cinema-gold to-cinema-amber flex items-center justify-center shadow-lg shadow-cinema-gold/20">
+          <div className="h-11 w-11 rounded-full bg-gradient-to-br from-cinema-gold to-cinema-amber flex items-center justify-center shadow-lg shadow-cinema-gold/20">
             <Sparkles className="h-5 w-5 text-cinema-navy" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="font-semibold text-sm">CineMatch Agent</div>
-            <div className="text-xs text-muted-foreground flex items-center gap-1.5">
+            <div className="font-semibold text-sm uppercase tracking-[0.24em] text-cinema-gold/90">
+              CineMatch Agent
+            </div>
+            <div className="text-xs text-muted-foreground flex flex-wrap items-center gap-2 mt-1">
               <span
                 className={cn(
                   "h-1.5 w-1.5 rounded-full",
                   apiKeysMissing ? "bg-red-500" : "bg-green-500 animate-pulse"
                 )}
               />
-              {apiKeysMissing ? "API keys missing" : "Online · Groq + TMDB"}
+              {apiKeysMissing ? "API keys missing" : "Online · Movie expert"}
             </div>
           </div>
-          <Film className="h-5 w-5 text-cinema-gold/60" />
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setHistoryOpen((open) => !open)}
+              className="border-white/10 text-sm text-muted-foreground hover:border-cinema-gold/30"
+            >
+              <History className="h-4 w-4 mr-2" />
+              History
+            </Button>
+          </div>
         </div>
+
+        <AnimatePresence initial={false}>
+          {historyOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mt-4 overflow-hidden rounded-2xl border border-white/10 bg-background/90 p-3"
+            >
+              <div className="flex items-center justify-between gap-3 mb-2">
+                <div className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
+                  Recent queries
+                </div>
+                <button
+                  type="button"
+                  onClick={onClearHistory}
+                  className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-cinema-gold"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  Clear
+                </button>
+              </div>
+              {history.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No recent queries yet.</p>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {history.map((query) => (
+                    <button
+                      key={query}
+                      type="button"
+                      onClick={() => {
+                        onHistorySelect(query);
+                        setHistoryOpen(false);
+                      }}
+                      className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-foreground transition hover:bg-white/10"
+                    >
+                      {query}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Messages */}

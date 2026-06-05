@@ -37,7 +37,7 @@ export interface AgentRecommendation {
 
 export interface AgentResponse {
   intro: string;
-  recommendations: AgentRecommendation[];
+  recommendations?: AgentRecommendation[];
 }
 
 export interface EnrichedRecommendation {

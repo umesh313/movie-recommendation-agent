@@ -23,11 +23,11 @@ export function HeroHeader({ onReset, hasResults }: HeroHeaderProps) {
           <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight">
             <span className="text-gradient-gold">CineMatch</span>
             <span className="text-foreground/80 font-sans font-normal text-lg sm:text-xl ml-2">
-              Agent
+              Movie guide
             </span>
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground">
-            AI-powered movie recommendations · TMDB + Groq
+            Curated recommendations, quotes, and movie trivia in one place.
           </p>
         </div>
       </div>

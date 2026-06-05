@@ -6,10 +6,17 @@ import type { EnrichedRecommendation } from "@/types/movie";
 
 interface MovieGridProps {
   recommendations: EnrichedRecommendation[];
+  favoriteIds: number[];
+  onToggleFavorite: (movieId: number) => void;
   loading: boolean;
 }
 
-export function MovieGrid({ recommendations, loading }: MovieGridProps) {
+export function MovieGrid({
+  recommendations,
+  favoriteIds,
+  onToggleFavorite,
+  loading,
+}: MovieGridProps) {
   if (loading && recommendations.length === 0) {
     return (
       <div className="space-y-4">
@@ -53,17 +60,28 @@ export function MovieGrid({ recommendations, loading }: MovieGridProps) {
       }}
       className="space-y-4"
     >
-      <div className="flex items-center gap-2 mb-2">
-        <Clapperboard className="h-5 w-5 text-cinema-gold" />
-        <h2 className="font-display text-xl font-bold">
-          Your Recommendations
-        </h2>
-        <span className="text-sm text-muted-foreground">
-          ({recommendations.length} picks)
-        </span>
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <div className="flex items-center gap-2">
+          <Clapperboard className="h-5 w-5 text-cinema-gold" />
+          <div>
+            <h2 className="font-display text-xl font-bold">Your Recommendations</h2>
+            <p className="text-sm text-muted-foreground">
+              Curated picks for your taste, with saved favorites ready to revisit.
+            </p>
+          </div>
+        </div>
+        <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-sm text-foreground">
+          {favoriteIds.length} saved favorite{favoriteIds.length === 1 ? "" : "s"}
+        </div>
       </div>
       {recommendations.map((movie, i) => (
-        <MovieCard key={movie.id} movie={movie} index={i} />
+        <MovieCard
+          key={movie.id}
+          movie={movie}
+          index={i}
+          isFavorite={favoriteIds.includes(movie.id)}
+          onToggleFavorite={onToggleFavorite}
+        />
       ))}
     </motion.div>
   );
