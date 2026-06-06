@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
-import { Clapperboard } from "lucide-react";
+import { Clapperboard, ChevronLeft, ChevronRight } from "lucide-react";
 import { MovieCard } from "@/components/movies/MovieCard";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { EnrichedRecommendation } from "@/types/movie";
 
@@ -8,6 +9,10 @@ interface MovieGridProps {
   recommendations: EnrichedRecommendation[];
   favoriteIds: number[];
   onToggleFavorite: (movieId: number) => void;
+  currentPage: number;
+  totalPages: number;
+  onNextPage: () => void;
+  onPreviousPage: () => void;
   loading: boolean;
 }
 
@@ -15,6 +20,10 @@ export function MovieGrid({
   recommendations,
   favoriteIds,
   onToggleFavorite,
+  currentPage,
+  totalPages,
+  onNextPage,
+  onPreviousPage,
   loading,
 }: MovieGridProps) {
   if (loading && recommendations.length === 0) {
@@ -83,6 +92,35 @@ export function MovieGrid({
           onToggleFavorite={onToggleFavorite}
         />
       ))}
+
+      {totalPages > 1 && (
+        <div className="mt-6 flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-4">
+          <Button
+            onClick={onPreviousPage}
+            disabled={currentPage === 1}
+            variant="outline"
+            size="sm"
+            className="border-white/10"
+          >
+            <ChevronLeft className="h-4 w-4 mr-2" />
+            Previous
+          </Button>
+          <div className="text-sm text-muted-foreground">
+            Page <span className="font-semibold text-foreground">{currentPage}</span> of{" "}
+            <span className="font-semibold text-foreground">{totalPages}</span>
+          </div>
+          <Button
+            onClick={onNextPage}
+            disabled={currentPage === totalPages}
+            variant="outline"
+            size="sm"
+            className="border-white/10"
+          >
+            Next
+            <ChevronRight className="h-4 w-4 ml-2" />
+          </Button>
+        </div>
+      )}
     </motion.div>
   );
 }

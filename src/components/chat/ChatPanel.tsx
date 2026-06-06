@@ -13,6 +13,12 @@ const SUGGESTIONS = [
   "Feel-good comedy for a rainy day",
   "Mind-bending thriller like Inception",
   "Classic 90s action movies",
+  "Spanish cinema",
+  "Korean films",
+  "French movies",
+  "Bollywood",
+  "Brad Pitt movies",
+  "Tom Hanks filmography",
 ];
 
 interface ChatPanelProps {

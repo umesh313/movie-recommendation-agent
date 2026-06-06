@@ -1,4 +1,4 @@
-import type { MovieDetails, MovieSummary } from "@/types/movie";
+import type { MovieDetails, MovieSummary, Person, PersonCredits, EnrichedRecommendation } from "@/types/movie";
 
 const TMDB_BASE = "https://api.themoviedb.org/3";
 const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p";
@@ -86,13 +86,22 @@ export async function getMovieDetails(id: number): Promise<MovieDetails> {
 }
 
 export async function getTrailerKey(id: number): Promise<string | null> {
-  const data = await tmdbFetch<{ results: { key: string; site: string; type: string }[] }>(
-    `/movie/${id}/videos`
-  );
-  const trailer = data.results.find(
-    (v) => v.site === "YouTube" && (v.type === "Trailer" || v.type === "Teaser")
-  );
-  return trailer?.key ?? null;
+  try {
+    const data = await tmdbFetch<{ results: { key: string; site: string; type: string }[] }>(
+      `/movie/${id}/videos`
+    );
+    // Prefer official Trailer, fallback to Teaser, then any YouTube video
+    const trailer = data.results.find(
+      (v) => v.site === "YouTube" && v.type === "Trailer"
+    ) || data.results.find(
+      (v) => v.site === "YouTube" && v.type === "Teaser"
+    ) || data.results.find(
+      (v) => v.site === "YouTube"
+    );
+    return trailer?.key ?? null;
+  } catch {
+    return null; // Return null silently if video fetch fails
+  }
 }
 
 export function compactMovieForAgent(movies: MovieSummary[]) {
@@ -150,4 +159,121 @@ export function keywordMatchGenres(input: string, genres: { id: number; name: st
   }
 
   return Array.from(matched);
+}
+
+export async function searchPeople(query: string): Promise<Person[]> {
+  const data = await tmdbFetch<{ results: any[] }>("/search/person", {
+    query,
+    include_adult: "false",
+  });
+  return data.results
+    .filter((p) => p.profile_path && p.known_for_department === "Acting")
+    .map((p) => ({
+      id: p.id,
+      name: p.name,
+      biography: "",
+      birthday: null,
+      deathday: null,
+      profile_path: p.profile_path,
+      popularity: p.popularity,
+      profile_url: p.profile_path ? posterUrl(p.profile_path, "w342") : null,
+    }));
+}
+
+export async function getPersonDetails(personId: number): Promise<Person> {
+  const data = await tmdbFetch<any>(`/person/${personId}`);
+  return {
+    id: data.id,
+    name: data.name,
+    biography: data.biography || "",
+    birthday: data.birthday || null,
+    deathday: data.deathday || null,
+    profile_path: data.profile_path,
+    popularity: data.popularity,
+    profile_url: data.profile_path ? posterUrl(data.profile_path, "w342") : null,
+  };
+}
+
+export async function getPersonCredits(personId: number): Promise<PersonCredits> {
+  const data = await tmdbFetch<any>(`/person/${personId}/combined_credits`);
+  
+  const movies = await Promise.all(
+    (data.cast || [])
+      .filter((item: any) => item.media_type === "movie" && item.poster_path)
+      .slice(0, 10)
+      .map(async (movie: any) => {
+        const details = await getMovieDetails(movie.id);
+        return enrichMovieToRecommendation(details, movie.character);
+      })
+  );
+
+  const tvShows = await Promise.all(
+    (data.cast || [])
+      .filter((item: any) => item.media_type === "tv" && item.poster_path)
+      .slice(0, 10)
+      .map(async (show: any) => {
+        const details = await tmdbFetch<any>(`/tv/${show.id}`);
+        return {
+          ...enrichMovieToRecommendation(details as any, show.character),
+          first_air_date: details.first_air_date,
+        };
+      })
+  );
+
+  return { movies, tvShows };
+}
+
+function enrichMovieToRecommendation(details: any, character?: string): EnrichedRecommendation {
+  return {
+    id: details.id,
+    title: details.title || details.name,
+    overview: details.overview,
+    vote_average: details.vote_average,
+    release_date: details.release_date || details.first_air_date,
+    poster_path: details.poster_path,
+    poster_url: details.poster_path ? posterUrl(details.poster_path) : null,
+    runtime: details.runtime || null,
+    genres: (details.genres || []).map((g: any) => g.name),
+    why_watch: character ? `Played ${character}` : "Featured role",
+    highlight: `Rated ${details.vote_average.toFixed(1)}/10`,
+    trailer_key: null,
+  };
+}
+
+export async function discoverByLanguage(
+  language: string,
+  genreIds: number[] = []
+): Promise<MovieSummary[]> {
+  const params: Record<string, string> = {
+    sort_by: "vote_average.desc",
+    "vote_count.gte": "50", // Lower threshold for international cinema
+    include_adult: "false",
+    with_original_language: language,
+  };
+
+  if (genreIds.length > 0) {
+    params.with_genres = genreIds.join(",");
+  }
+
+  const data = await tmdbFetch<{ results: MovieSummary[] }>("/discover/movie", params);
+  // Include results with either poster or overview to be less restrictive
+  return data.results.filter((m) => (m.poster_path || m.overview) && m.vote_average >= 5);
+}
+
+export async function searchMoviesAndTV(query: string): Promise<{ movies: MovieSummary[]; tv: any[] }> {
+  const [movieData, tvData] = await Promise.all([
+    tmdbFetch<{ results: MovieSummary[] }>("/search/movie", {
+      query,
+      include_adult: "false",
+    }),
+    tmdbFetch<{ results: any[] }>("/search/tv", {
+      query,
+      include_adult: "false",
+    }),
+  ]);
+
+  return {
+    movies: movieData.results.filter((m) => m.poster_path && m.overview),
+    tv: tvData.results.filter((t) => t.poster_path && t.overview),
+  };
 }

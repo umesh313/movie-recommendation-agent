@@ -1,15 +1,19 @@
 import { useCallback, useEffect, useState } from "react";
 import {
   answerMovieQuestion,
+  answerActorQuery,
   checkApiKeys,
+  detectQueryType,
+  extractLanguagePreference,
   extractPreferences,
   getFallbackRecommendations,
-  isQuoteOrMovieFactRequest,
   recommendMovies,
+  rejectNonMovieQuery,
 } from "@/services/agentService";
 import {
   compactMovieForAgent,
   discoverByGenre,
+  discoverByLanguage,
   getMovieDetails,
   getSimilarMovies,
   getTrailerKey,
@@ -21,10 +25,12 @@ import type {
   ChatMessage,
   EnrichedRecommendation,
   ExtractedPreferences,
+  PersonResponse,
+  QueryType,
 } from "@/types/movie";
 
 const WELCOME =
-  "Hi! I'm CineMatch — your personal movie curator. Tell me what you're in the mood for: a genre, era, vibe, or a film you loved.";
+  "Hi! I'm CineMatch — your movie expert! Ask me for recommendations, search for actors/actresses, discover films from Spanish, Korean, French, German cinema, or Bollywood. What would you like to explore?"
 
 export function useMovieAgent() {
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -35,10 +41,15 @@ export function useMovieAgent() {
   const [status, setStatus] = useState<AgentStatus>("idle");
   const [statusLabel, setStatusLabel] = useState("");
   const [recommendations, setRecommendations] = useState<EnrichedRecommendation[]>([]);
+  const [allRecommendations, setAllRecommendations] = useState<EnrichedRecommendation[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [actorData, setActorData] = useState<PersonResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const apiKeys = checkApiKeys();
+  const ITEMS_PER_PAGE = 6;
 
   const sendMessage = useCallback(async (text: string) => {
     const trimmed = text.trim();
@@ -54,7 +65,10 @@ export function useMovieAgent() {
     setError(null);
     setLoading(true);
     setRecommendations([]);
+    setActorData(null);
+    setCurrentPage(1);
     setMessages((m) => [...m, { role: "user", content: trimmed }]);
+    
     setHistory((prev) => {
       const next = [trimmed, ...prev.filter((item) => item !== trimmed)].slice(0, 10);
       window.localStorage.setItem("cineMatch_history", JSON.stringify(next));
@@ -62,28 +76,56 @@ export function useMovieAgent() {
     });
 
     try {
-      if (await isQuoteOrMovieFactRequest(trimmed)) {
-        setStatus("extracting");
-        setStatusLabel("Searching movie knowledge…");
-        const answer = await answerMovieQuestion(trimmed);
-
+      // Detect query type
+      const queryType: QueryType = await detectQueryType(trimmed);
+      
+      if (queryType === "non_movie") {
+        const response = await rejectNonMovieQuery();
         setMessages((m) => [
           ...m,
-          { role: "assistant", content: answer.intro },
+          { role: "assistant", content: response.intro },
         ]);
-        setRecommendations([]);
         setStatus("done");
         setStatusLabel("");
         return;
       }
 
+      if (queryType === "actor") {
+        setStatus("extracting");
+        setStatusLabel("Finding actor info...");
+        const personResponse = await answerActorQuery(trimmed);
+        setActorData(personResponse);
+        setMessages((m) => [
+          ...m,
+          { role: "assistant", content: personResponse.intro },
+        ]);
+        setStatus("done");
+        setStatusLabel("");
+        return;
+      }
+
+      if (queryType === "quote") {
+        setStatus("extracting");
+        setStatusLabel("Searching movie knowledge...");
+        const answer = await answerMovieQuestion(trimmed);
+        setMessages((m) => [
+          ...m,
+          { role: "assistant", content: answer.intro },
+        ]);
+        setStatus("done");
+        setStatusLabel("");
+        return;
+      }
+
+      // Handle recommendations (including language-specific and TV shows)
       setStatus("extracting");
-      setStatusLabel("Understanding your taste…");
+      setStatusLabel("Understanding your taste...");
       const preferences: ExtractedPreferences = await extractPreferences(trimmed);
+      const language = await extractLanguagePreference(trimmed);
 
       setStatus("searching");
-      setStatusLabel("Searching TMDB…");
-      let candidates = await fetchCandidates(preferences);
+      setStatusLabel("Searching movies...");
+      let candidates = await fetchCandidates(preferences, language);
 
       if (candidates.length === 0) {
         candidates = await discoverByGenre([], undefined, undefined);
@@ -92,7 +134,7 @@ export function useMovieAgent() {
       const compact = compactMovieForAgent(candidates);
 
       setStatus("recommending");
-      setStatusLabel("Curating your picks…");
+      setStatusLabel("Curating your picks...");
       let agentResponse;
       try {
         agentResponse = await recommendMovies(trimmed, preferences, compact);
@@ -101,14 +143,19 @@ export function useMovieAgent() {
       }
 
       setStatus("enriching");
-      setStatusLabel("Loading posters & trailers…");
+      setStatusLabel("Loading posters & trailers...");
       const enriched = await enrichRecommendations(agentResponse.recommendations ?? []);
+      
+      setAllRecommendations(enriched);
+      const pageCount = Math.ceil(enriched.length / ITEMS_PER_PAGE);
+      setTotalPages(pageCount);
+      setRecommendations(enriched.slice(0, ITEMS_PER_PAGE));
 
-      setRecommendations(enriched);
       setMessages((m) => [
         ...m,
         { role: "assistant", content: agentResponse.intro },
       ]);
+      
       setStatus("done");
       setStatusLabel("");
     } catch (e) {
@@ -124,6 +171,26 @@ export function useMovieAgent() {
       setLoading(false);
     }
   }, [loading, apiKeys.tmdb, apiKeys.groq]);
+
+  const loadNextPage = useCallback(() => {
+    if (currentPage < totalPages) {
+      const nextPage = currentPage + 1;
+      const start = (nextPage - 1) * ITEMS_PER_PAGE;
+      const end = start + ITEMS_PER_PAGE;
+      setRecommendations(allRecommendations.slice(start, end));
+      setCurrentPage(nextPage);
+    }
+  }, [currentPage, totalPages, allRecommendations, ITEMS_PER_PAGE]);
+
+  const loadPreviousPage = useCallback(() => {
+    if (currentPage > 1) {
+      const prevPage = currentPage - 1;
+      const start = (prevPage - 1) * ITEMS_PER_PAGE;
+      const end = start + ITEMS_PER_PAGE;
+      setRecommendations(allRecommendations.slice(start, end));
+      setCurrentPage(prevPage);
+    }
+  }, [currentPage, allRecommendations, ITEMS_PER_PAGE]);
 
   const clearHistory = useCallback(() => {
     setHistory([]);
@@ -179,21 +246,33 @@ export function useMovieAgent() {
     apiKeys,
     history,
     favoriteIds,
+    actorData,
+    currentPage,
+    totalPages,
     sendMessage,
     clearHistory,
     toggleFavorite,
+    loadNextPage,
+    loadPreviousPage,
     reset,
   };
 }
 
 async function fetchCandidates(
-  preferences: ExtractedPreferences
+  preferences: ExtractedPreferences,
+  language?: string
 ) {
-  let candidates = await discoverByGenre(
-    preferences.genreIds,
-    preferences.yearFrom,
-    preferences.yearTo
-  );
+  let candidates = [];
+
+  if (language) {
+    candidates = await discoverByLanguage(language, preferences.genreIds);
+  } else {
+    candidates = await discoverByGenre(
+      preferences.genreIds,
+      preferences.yearFrom,
+      preferences.yearTo
+    );
+  }
 
   if (preferences.searchQuery) {
     const searchResults = await searchMovies(preferences.searchQuery);

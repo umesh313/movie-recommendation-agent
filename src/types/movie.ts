@@ -63,3 +63,40 @@ export type AgentStatus =
   | "enriching"
   | "done"
   | "error";
+
+export interface Person {
+  id: number;
+  name: string;
+  biography: string;
+  birthday: string | null;
+  deathday: string | null;
+  profile_path: string | null;
+  popularity: number;
+  profile_url: string | null;
+}
+
+export interface PersonCredits {
+  movies: EnrichedRecommendation[];
+  tvShows: (EnrichedRecommendation & { first_air_date?: string })[];
+}
+
+export interface PersonResponse {
+  intro: string;
+  person: Person;
+  credits: PersonCredits;
+}
+
+export type QueryType = "actor" | "recommendation" | "quote" | "tvshow" | "general_movie_fact" | "non_movie";
+
+export interface ExtractedPreferencesWithLanguage extends ExtractedPreferences {
+  language?: string;
+  contentTypes?: ("movie" | "tv")[];
+}
+
+export interface RecommendationPageData {
+  items: EnrichedRecommendation[];
+  currentPage: number;
+  totalPages: number;
+  totalResults: number;
+  hasNextPage: boolean;
+}

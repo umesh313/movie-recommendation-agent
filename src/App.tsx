@@ -15,9 +15,14 @@ function App() {
     apiKeys,
     history,
     favoriteIds,
+    actorData,
+    currentPage,
+    totalPages,
     sendMessage,
     clearHistory,
     toggleFavorite,
+    loadNextPage,
+    loadPreviousPage,
     reset,
   } = useMovieAgent();
 
@@ -85,12 +90,81 @@ function App() {
           </div>
 
           <div className="lg:col-span-3 pb-8">
-            <MovieGrid
-              recommendations={recommendations}
-              favoriteIds={favoriteIds}
-              onToggleFavorite={toggleFavorite}
-              loading={loading && recommendations.length === 0}
-            />
+            {actorData ? (
+              <div className="space-y-6">
+                <div className="glass rounded-3xl p-6 border border-white/5">
+                  <div className="flex items-start gap-6">
+                    {actorData.person.profile_url && (
+                      <img
+                        src={actorData.person.profile_url}
+                        alt={actorData.person.name}
+                        className="w-32 h-48 rounded-2xl object-cover shadow-lg"
+                      />
+                    )}
+                    <div className="flex-1">
+                      <h2 className="text-3xl font-bold mb-2">{actorData.person.name}</h2>
+                      {actorData.person.birthday && (
+                        <p className="text-sm text-muted-foreground mb-4">
+                          Born: {new Date(actorData.person.birthday).toLocaleDateString()}
+                        </p>
+                      )}
+                      <p className="text-foreground/80 leading-relaxed mb-4">
+                        {actorData.person.biography}
+                      </p>
+                      <div className="flex gap-4 text-sm">
+                        <div>
+                          <p className="font-semibold text-cinema-gold">{actorData.credits.movies.length}</p>
+                          <p className="text-muted-foreground">Films</p>
+                        </div>
+                        <div>
+                          <p className="font-semibold text-cinema-gold">{actorData.credits.tvShows.length}</p>
+                          <p className="text-muted-foreground">TV Shows</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {actorData.credits.movies.length > 0 && (
+                  <div>
+                    <h3 className="text-xl font-bold mb-4">Films</h3>
+                    <div className="space-y-3">
+                      {actorData.credits.movies.map((movie) => (
+                        <div key={movie.id} className="glass rounded-xl p-3 border border-white/5">
+                          <p className="font-semibold">{movie.title}</p>
+                          <p className="text-sm text-muted-foreground">{movie.why_watch}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {actorData.credits.tvShows.length > 0 && (
+                  <div>
+                    <h3 className="text-xl font-bold mb-4">TV Shows</h3>
+                    <div className="space-y-3">
+                      {actorData.credits.tvShows.map((show) => (
+                        <div key={show.id} className="glass rounded-xl p-3 border border-white/5">
+                          <p className="font-semibold">{show.title}</p>
+                          <p className="text-sm text-muted-foreground">{show.why_watch}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <MovieGrid
+                recommendations={recommendations}
+                favoriteIds={favoriteIds}
+                onToggleFavorite={toggleFavorite}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onNextPage={loadNextPage}
+                onPreviousPage={loadPreviousPage}
+                loading={loading && recommendations.length === 0}
+              />
+            )}
           </div>
         </div>
 
