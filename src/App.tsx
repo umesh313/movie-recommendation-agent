@@ -77,7 +77,7 @@ function AppContent() {
 
         {/* Main Content */}
         <div className="flex-1 lg:ml-0 min-w-0">
-          <div className="container max-w-7xl mx-auto px-4 py-6 sm:py-8 lg:pl-4 pl-[60px]">
+          <div className="container max-w-7xl mx-auto px-4 py-6 sm:py-8 lg:pl-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
               <HeroHeader
                 onReset={handleBackToHome}
