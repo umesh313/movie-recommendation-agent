@@ -120,7 +120,7 @@ function AppContent() {
             )}
 
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8">
-              <div className="lg:col-span-2 lg:sticky lg:top-6 lg:self-start lg:h-[calc(100vh-6rem)] min-h-[400px] max-h-[500px] lg:max-h-none">
+              <div className="lg:col-span-2 lg:sticky lg:top-6 lg:self-start lg:h-[calc(100vh-6rem)] min-h-[500px] max-h-[70vh] lg:max-h-none">
                 <ChatPanel
                   messages={messages}
                   loading={loading}

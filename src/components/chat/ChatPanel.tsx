@@ -12,13 +12,6 @@ const SUGGESTIONS = [
   "Dark sci-fi from the 2010s",
   "Feel-good comedy for a rainy day",
   "Mind-bending thriller like Inception",
-  "Classic 90s action movies",
-  "Spanish cinema",
-  "Korean films",
-  "French movies",
-  "Bollywood",
-  "Brad Pitt movies",
-  "Tom Hanks filmography",
 ];
 
 interface ChatPanelProps {
