@@ -13,7 +13,7 @@ export function HeroHeader({ onReset, hasResults }: HeroHeaderProps) {
       initial={{ opacity: 0, y: -16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="flex items-center justify-between gap-4 mb-6"
+      className="flex items-center justify-between gap-4"
     >
       <div className="flex items-center gap-3">
         <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-cinema-gold to-cinema-amber flex items-center justify-center shadow-lg shadow-cinema-gold/25">
@@ -37,9 +37,9 @@ export function HeroHeader({ onReset, hasResults }: HeroHeaderProps) {
           variant="outline"
           size="sm"
           onClick={onReset}
-          className="border-white/10 hover:border-cinema-gold/30 shrink-0"
+          className="border-white/10 hover:border-cinema-gold/30 shrink-0 max-sm:text-xs max-sm:px-2 max-sm:py-1 max-sm:h-auto"
         >
-          <RotateCcw className="h-3.5 w-3.5 mr-1.5" />
+          <RotateCcw className="h-3.5 w-3.5 mr-1.5 max-sm:h-3 max-sm:w-3 max-sm:mr-1" />
           New search
         </Button>
       )}

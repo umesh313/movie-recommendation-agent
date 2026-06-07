@@ -233,6 +233,10 @@ export function useMovieAgent() {
   const reset = useCallback(() => {
     setMessages([{ role: "assistant", content: WELCOME }]);
     setRecommendations([]);
+    setAllRecommendations([]);
+    setActorData(null);
+    setCurrentPage(1);
+    setTotalPages(1);
     setStatus("idle");
     setStatusLabel("");
     setError(null);

@@ -60,6 +60,7 @@ function AppContent() {
   function handleBackToHome() {
     setSelectedCategory(null);
     setCategoryMovies(null);
+    reset();
   }
 
   return (
