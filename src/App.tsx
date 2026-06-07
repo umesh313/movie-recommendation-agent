@@ -1,4 +1,4 @@
-import { AlertCircle, User } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ChatPanel } from "@/components/chat/ChatPanel";
 import { HeroHeader } from "@/components/layout/HeroHeader";
@@ -6,15 +6,11 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { FeaturedMovies } from "@/components/movies/FeaturedMovies";
 import { CategoryMovies } from "@/components/movies/CategoryMovies";
 import { MovieGrid } from "@/components/movies/MovieGrid";
-import { TasteProfilePanel } from "@/components/taste/TasteProfilePanel";
 import { useMovieAgent } from "@/hooks/useMovieAgent";
-import { useTasteProfile as _useTasteProfile } from "@/contexts/TasteProfileContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
-import { Button } from "@/components/ui/button";
 import type { FeaturedMovie } from "@/data/featuredMovies";
 
 function AppContent() {
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [categoryMovies, setCategoryMovies] = useState<FeaturedMovie[] | null>(null);
   const recommendationsRef = useRef<HTMLDivElement>(null);
@@ -77,21 +73,12 @@ function AppContent() {
 
         {/* Main Content */}
         <div className="flex-1 lg:ml-0 min-w-0">
-          <div className="container max-w-7xl mx-auto px-4 py-6 sm:py-8 lg:pl-4">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
+          <div className="container max-w-7xl mx-auto px-4 py-6 sm:py-8 lg:pl-4 pl-14">
+            <div className="mb-6">
               <HeroHeader
                 onReset={handleBackToHome}
                 hasResults={recommendations.length > 0}
               />
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsProfileOpen(true)}
-                className="border-white/10 dark:border-white/10 text-sm text-muted-foreground hover:border-cinema-gold/30 hover:text-cinema-gold self-start sm:self-auto"
-              >
-                <User className="h-4 w-4 mr-2" />
-                Taste Profile
-              </Button>
             </div>
 
             {apiKeysMissing && (
@@ -252,11 +239,6 @@ function AppContent() {
               </div>
             </div>
 
-            <TasteProfilePanel 
-              isOpen={isProfileOpen} 
-              onClose={() => setIsProfileOpen(false)} 
-            />
-            
             <footer className="mt-8 pt-6 border-t border-white/5 text-center text-xs text-muted-foreground">
               This product uses the TMDB API but is not endorsed or certified by TMDB.
             </footer>
