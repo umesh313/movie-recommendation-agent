@@ -17,6 +17,8 @@ export interface MovieDetails extends MovieSummary {
   runtime: number | null;
   genres: { id: number; name: string }[];
   tagline?: string;
+  director?: string;
+  cast?: string[];
 }
 
 export interface ExtractedPreferences {
@@ -53,6 +55,17 @@ export interface EnrichedRecommendation {
   why_watch: string;
   highlight: string;
   trailer_key: string | null;
+  director?: string;
+  cast?: string[];
+  matchScore?: number;
+  rtScore?: number;
+  streamingInfo?: StreamingInfo[];
+}
+
+export interface StreamingInfo {
+  provider: string;
+  type: "rent" | "buy" | "flatrate";
+  link?: string;
 }
 
 export type AgentStatus =
@@ -99,4 +112,77 @@ export interface RecommendationPageData {
   totalPages: number;
   totalResults: number;
   hasNextPage: boolean;
+}
+
+// Taste Profile Types
+export interface TasteProfile {
+  favoriteMovies: FavoriteMovie[];
+  preferredGenres: string[];
+  favoriteActors: string[];
+  favoriteDirectors: string[];
+  dislikedGenres: string[];
+  dislikedMovies: string[];
+  preferredMoods: string[];
+  preferredEras: string[];
+  profileSummary?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface FavoriteMovie {
+  title: string;
+  tmdbId?: number;
+  year?: string;
+  reason?: string;
+}
+
+// Conversation Memory Types
+export interface ConversationContext {
+  previousRecommendations: number[]; // tmdb_ids
+  likedMovies: number[]; // tmdb_ids
+  dislikedMovies: number[]; // tmdb_ids
+  lastGenres: string[];
+  lastMood?: string;
+  refinementCount: number;
+  sessionStart: string;
+}
+
+// Watchlist Types
+export type WatchlistStatus = "want_to_watch" | "watching" | "watched";
+
+export interface WatchlistItem {
+  movieId: number;
+  title: string;
+  status: WatchlistStatus;
+  userRating?: number; // 1-10
+  addedAt: string;
+  watchedAt?: string;
+  notes?: string;
+}
+
+// Mood Categories
+export interface MoodCategory {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  associatedGenres: number[];
+  keywords: string[];
+}
+
+// Discovery Mode
+export type DiscoveryMode = "popular" | "hidden_gems" | "underrated" | "cult_classics";
+
+// Filter State
+export interface FilterState {
+  genres: number[];
+  yearFrom?: number;
+  yearTo?: number;
+  minRating?: number;
+  maxRuntime?: number;
+  minRuntime?: number;
+  language?: string;
+  discoveryMode?: DiscoveryMode;
+  moods?: string[];
+  hasTrailer?: boolean;
 }

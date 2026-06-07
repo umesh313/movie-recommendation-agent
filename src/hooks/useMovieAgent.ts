@@ -7,6 +7,7 @@ import {
   extractLanguagePreference,
   extractPreferences,
   getFallbackRecommendations,
+  getFeaturedRecommendations,
   recommendMovies,
   rejectNonMovieQuery,
 } from "@/services/agentService";
@@ -123,23 +124,45 @@ export function useMovieAgent() {
       const preferences: ExtractedPreferences = await extractPreferences(trimmed);
       const language = await extractLanguagePreference(trimmed);
 
+      // Check if this is a genre or rating query that should use featured movies
+      const useFeatured = shouldUseFeaturedMovies(trimmed, preferences);
+
       setStatus("searching");
       setStatusLabel("Searching movies...");
-      let candidates = await fetchCandidates(preferences, language);
-
-      if (candidates.length === 0) {
-        candidates = await discoverByGenre([], undefined, undefined);
-      }
-
-      const compact = compactMovieForAgent(candidates);
-
-      setStatus("recommending");
-      setStatusLabel("Curating your picks...");
+      
       let agentResponse;
-      try {
-        agentResponse = await recommendMovies(trimmed, preferences, compact);
-      } catch {
-        agentResponse = await getFallbackRecommendations(candidates);
+      
+      if (useFeatured) {
+        // Use featured movies for genre/rating queries
+        try {
+          agentResponse = await getFeaturedRecommendations(trimmed, preferences);
+        } catch (featuredError) {
+          // Fallback to regular recommendations if featured fails
+          const candidates = await fetchCandidates(preferences, language);
+          const compact = compactMovieForAgent(candidates);
+          try {
+            agentResponse = await recommendMovies(trimmed, preferences, compact);
+          } catch {
+            agentResponse = await getFallbackRecommendations(candidates);
+          }
+        }
+      } else {
+        // Regular recommendation flow
+        let candidates = await fetchCandidates(preferences, language);
+
+        if (candidates.length === 0) {
+          candidates = await discoverByGenre([], undefined, undefined);
+        }
+
+        const compact = compactMovieForAgent(candidates);
+
+        setStatus("recommending");
+        setStatusLabel("Curating your picks...");
+        try {
+          agentResponse = await recommendMovies(trimmed, preferences, compact);
+        } catch {
+          agentResponse = await getFallbackRecommendations(candidates);
+        }
       }
 
       setStatus("enriching");
@@ -334,4 +357,37 @@ async function enrichRecommendations(
   );
 
   return results;
+}
+
+// Determine if a query should use featured movies
+function shouldUseFeaturedMovies(
+  message: string,
+  preferences: ExtractedPreferences
+): boolean {
+  const lower = message.toLowerCase();
+  
+  // Check for explicit featured/top/best requests
+  if (/\b(featured|top\s+(rated|movies)|best\s+(rated|movies)|highest\s+rated)\b/.test(lower)) {
+    return true;
+  }
+  
+  // Check for rating range queries (e.g., "7.8 to 7.9 rating")
+  if (/\d+\.\d+\s*(to|-)\s*\d+\.\d+\s+rating/i.test(lower) ||
+      /rating\s+(of\s+)?\d+\.\d+\s*(to|-)\s*\d+\.\d+/i.test(lower)) {
+    return true;
+  }
+  
+  // Check for genre queries with specific intent
+  if (preferences.genreNames.length > 0) {
+    // If user asks for "best", "top", "featured" in combination with genre
+    if (/\b(best|top|featured|recommended)\b/.test(lower)) {
+      return true;
+    }
+    // If it's a simple genre request without other specific criteria
+    if (!preferences.searchQuery && !preferences.yearFrom && !preferences.yearTo) {
+      return true;
+    }
+  }
+  
+  return false;
 }

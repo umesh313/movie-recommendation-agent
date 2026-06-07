@@ -1,10 +1,19 @@
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, User } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { ChatPanel } from "@/components/chat/ChatPanel";
 import { HeroHeader } from "@/components/layout/HeroHeader";
+import { FeaturedMovies } from "@/components/movies/FeaturedMovies";
 import { MovieGrid } from "@/components/movies/MovieGrid";
+import { TasteProfilePanel } from "@/components/taste/TasteProfilePanel";
 import { useMovieAgent } from "@/hooks/useMovieAgent";
+import { useTasteProfile as _useTasteProfile } from "@/contexts/TasteProfileContext";
+import { Button } from "@/components/ui/button";
 
 function App() {
+  // useTasteProfile is available if needed: const { profile } = _useTasteProfile();
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const recommendationsRef = useRef<HTMLDivElement>(null);
+  
   const {
     messages,
     status,
@@ -28,13 +37,37 @@ function App() {
 
   const apiKeysMissing = !apiKeys.tmdb || !apiKeys.groq;
 
+  // Auto-scroll to recommendations on mobile when they appear
+  useEffect(() => {
+    if (recommendations.length > 0 && window.innerWidth < 1024) {
+      // Small delay to ensure content is rendered
+      setTimeout(() => {
+        recommendationsRef.current?.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start' 
+        });
+      }, 300);
+    }
+  }, [recommendations.length]);
+
   return (
     <div className="min-h-screen">
       <div className="container max-w-7xl mx-auto px-4 py-6 sm:py-8">
-        <HeroHeader
-          onReset={reset}
-          hasResults={recommendations.length > 0}
-        />
+        <div className="flex items-center justify-between mb-6">
+          <HeroHeader
+            onReset={reset}
+            hasResults={recommendations.length > 0}
+          />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsProfileOpen(true)}
+            className="border-white/10 text-sm text-muted-foreground hover:border-cinema-gold/30 hover:text-cinema-gold"
+          >
+            <User className="h-4 w-4 mr-2" />
+            Taste Profile
+          </Button>
+        </div>
 
         {apiKeysMissing && (
           <div className="mb-4 flex items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm">
@@ -153,21 +186,47 @@ function App() {
                   </div>
                 )}
               </div>
+            ) : recommendations.length > 0 ? (
+              <div ref={recommendationsRef}>
+                <MovieGrid
+                  recommendations={recommendations}
+                  favoriteIds={favoriteIds}
+                  onToggleFavorite={toggleFavorite}
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onNextPage={loadNextPage}
+                  onPreviousPage={loadPreviousPage}
+                  loading={loading && recommendations.length === 0}
+                />
+              </div>
             ) : (
-              <MovieGrid
-                recommendations={recommendations}
-                favoriteIds={favoriteIds}
-                onToggleFavorite={toggleFavorite}
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onNextPage={loadNextPage}
-                onPreviousPage={loadPreviousPage}
-                loading={loading && recommendations.length === 0}
-              />
+              <div className="space-y-8">
+                <FeaturedMovies />
+                
+                <div className="glass rounded-3xl p-8 border border-white/5 text-center">
+                  <h3 className="text-2xl font-bold mb-4">How can I help you today?</h3>
+                  <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
+                    I'm CineMatch, your personal movie curator. Ask me for recommendations based on genres, moods, eras, 
+                    or specific ratings. I have access to a curated collection of highly-rated films and can help you 
+                    discover your next favorite movie.
+                  </p>
+                  <div className="flex flex-wrap justify-center gap-3">
+                    <span className="px-4 py-2 bg-white/5 rounded-full text-sm">"Show me action movies"</span>
+                    <span className="px-4 py-2 bg-white/5 rounded-full text-sm">"Recommend sci-fi films"</span>
+                    <span className="px-4 py-2 bg-white/5 rounded-full text-sm">"Movies with 7.9 rating"</span>
+                    <span className="px-4 py-2 bg-white/5 rounded-full text-sm">"Best comedies"</span>
+                  </div>
+                </div>
+              </div>
             )}
           </div>
         </div>
 
+        <TasteProfilePanel 
+          isOpen={isProfileOpen} 
+          onClose={() => setIsProfileOpen(false)} 
+        />
+        
         <footer className="mt-8 pt-6 border-t border-white/5 text-center text-xs text-muted-foreground">
           This product uses the TMDB API but is not endorsed or certified by TMDB.
         </footer>
