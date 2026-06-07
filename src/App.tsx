@@ -76,9 +76,9 @@ function AppContent() {
         />
 
         {/* Main Content */}
-        <div className="flex-1 lg:ml-0">
-          <div className="container max-w-7xl mx-auto px-4 py-6 sm:py-8">
-            <div className="flex items-center justify-between mb-6">
+        <div className="flex-1 lg:ml-0 min-w-0">
+          <div className="container max-w-7xl mx-auto px-4 py-6 sm:py-8 lg:pl-4 pl-[60px]">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
               <HeroHeader
                 onReset={handleBackToHome}
                 hasResults={recommendations.length > 0}
@@ -87,7 +87,7 @@ function AppContent() {
                 variant="outline"
                 size="sm"
                 onClick={() => setIsProfileOpen(true)}
-                className="border-white/10 text-sm text-muted-foreground hover:border-cinema-gold/30 hover:text-cinema-gold"
+                className="border-white/10 dark:border-white/10 text-sm text-muted-foreground hover:border-cinema-gold/30 hover:text-cinema-gold self-start sm:self-auto"
               >
                 <User className="h-4 w-4 mr-2" />
                 Taste Profile
@@ -133,7 +133,7 @@ function AppContent() {
             )}
 
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8">
-              <div className="lg:col-span-2 lg:sticky lg:top-6 lg:self-start h-[calc(100vh-8rem)] lg:h-[calc(100vh-6rem)] min-h-[480px]">
+              <div className="lg:col-span-2 lg:sticky lg:top-6 lg:self-start lg:h-[calc(100vh-6rem)] min-h-[400px] max-h-[500px] lg:max-h-none">
                 <ChatPanel
                   messages={messages}
                   loading={loading}
@@ -233,7 +233,7 @@ function AppContent() {
                   <div className="space-y-8">
                     <FeaturedMovies />
                     
-                    <div className="glass rounded-3xl p-8 border border-white/5 text-center">
+                    <div className="glass rounded-3xl p-6 sm:p-8 border text-center">
                       <h3 className="text-2xl font-bold mb-4">How can I help you today?</h3>
                       <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
                         I'm CineMatch, your personal movie curator. Ask me for recommendations based on genres, moods, eras, 
