@@ -9,7 +9,7 @@ import { MovieGrid } from "@/components/movies/MovieGrid";
 import { TasteProfilePanel } from "@/components/taste/TasteProfilePanel";
 import { useMovieAgent } from "@/hooks/useMovieAgent";
 import { useTasteProfile as _useTasteProfile } from "@/contexts/TasteProfileContext";
-import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import { Button } from "@/components/ui/button";
 import type { FeaturedMovie } from "@/data/featuredMovies";
 

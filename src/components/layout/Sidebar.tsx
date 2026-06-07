@@ -6,7 +6,6 @@ import {
   Film, 
   Heart, 
   Laugh, 
-  HeartHandshake, 
   Sword, 
   Compass, 
   BrainCircuit, 
@@ -19,8 +18,6 @@ import {
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { featuredMovies, getFeaturedMoviesByGenre } from "@/data/featuredMovies";
-import { MovieCard } from "@/components/movies/MovieCard";
-import type { EnrichedRecommendation } from "@/types/movie";
 
 interface Category {
   id: string;
@@ -45,7 +42,7 @@ interface SidebarProps {
   selectedCategory?: string | null;
 }
 
-export function Sidebar({ onCategorySelect, selectedCategory }: SidebarProps) {
+export function Sidebar({ onCategorySelect }: SidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
   const { theme, toggleTheme } = useTheme();
