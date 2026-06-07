@@ -4,6 +4,38 @@
 
 @layer base {
   :root {
+    --background: 0 0% 100%;
+    --foreground: 230 25% 5%;
+
+    --card: 0 0% 98%;
+    --card-foreground: 230 25% 5%;
+
+    --popover: 0 0% 98%;
+    --popover-foreground: 230 25% 5%;
+
+    --primary: 43 96% 50%;
+    --primary-foreground: 230 25% 5%;
+
+    --secondary: 0 0% 92%;
+    --secondary-foreground: 230 15% 15%;
+
+    --muted: 0 0% 92%;
+    --muted-foreground: 230 10% 40%;
+
+    --accent: 43 80% 45%;
+    --accent-foreground: 230 25% 5%;
+
+    --destructive: 0 84% 37%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 85%;
+    --input: 0 0% 85%;
+    --ring: 43 96% 50%;
+
+    --radius: 0.75rem;
+  }
+
+  .dark {
     --background: 230 25% 5%;
     --foreground: 45 30% 96%;
 
@@ -31,8 +63,6 @@
     --border: 230 15% 18%;
     --input: 230 15% 18%;
     --ring: 43 96% 56%;
-
-    --radius: 0.75rem;
   }
 }
 
@@ -43,8 +73,20 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    background: radial-gradient(ellipse at top, #1a1a2e 0%, #0a0a0f 50%, #050508 100%);
     min-height: 100vh;
+    background: radial-gradient(ellipse at top, var(--bg-top), var(--bg-mid), var(--bg-bottom));
+  }
+
+  :root {
+    --bg-top: #f0f0f5;
+    --bg-mid: #e8e8ee;
+    --bg-bottom: #dddde3;
+  }
+
+  :root.dark {
+    --bg-top: #1a1a2e;
+    --bg-mid: #0a0a0f;
+    --bg-bottom: #050508;
   }
 }
 
@@ -80,10 +122,21 @@ body::before {
 
 @layer utilities {
   .glass {
-    @apply bg-card/60 backdrop-blur-xl border border-white/10;
+    @apply bg-card/60 backdrop-blur-xl border;
+    border-color: var(--glass-border);
   }
 
   .text-gradient-gold {
     @apply bg-gradient-to-r from-cinema-gold via-cinema-amber to-cinema-gold bg-clip-text text-transparent;
+  }
+}
+
+@layer base {
+  :root {
+    --glass-border: hsl(0 0% 85% / 0.5);
+  }
+
+  :root.dark {
+    --glass-border: hsl(0 0% 100% / 0.1);
   }
 }
