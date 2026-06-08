@@ -31,7 +31,7 @@ export function MovieGrid({
       <div className="space-y-4">
         <Skeleton className="h-8 w-48" />
         {[1, 2, 3].map((i) => (
-          <Skeleton key={i} className="h-48 w-full rounded-xl" />
+          <Skeleton key={i} className="h-48 w-full rounded-lg" />
         ))}
       </div>
     );
@@ -43,13 +43,13 @@ export function MovieGrid({
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="glass rounded-2xl p-8 max-w-sm"
+          className="card-chrome rounded-lg p-8 max-w-sm"
         >
-          <Clapperboard className="h-12 w-12 text-cinema-gold/40 mx-auto mb-4" />
-          <h3 className="font-display text-lg font-semibold mb-2">
+          <Clapperboard className="h-12 w-12 text-ink-mute/40 mx-auto mb-4" />
+          <h3 className="text-display-sm font-semibold mb-2">
             Your picks will appear here
           </h3>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-body-sm text-ink-mute">
             Tell the agent what you're in the mood for — genre, era, vibe, or a
             movie you loved — and get curated recommendations with posters and
             trailers.
@@ -71,15 +71,15 @@ export function MovieGrid({
     >
       <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
         <div className="flex items-center gap-2">
-          <Clapperboard className="h-5 w-5 text-cinema-gold" />
+          <Clapperboard className="h-5 w-5 text-ink" />
           <div>
-            <h2 className="font-display text-xl font-bold">Your Recommendations</h2>
-            <p className="text-sm text-muted-foreground">
+            <h2 className="text-display-sm font-semibold text-foreground">Your Recommendations</h2>
+            <p className="text-body-sm text-ink-mute">
               Curated picks for your taste, with saved favorites ready to revisit.
             </p>
           </div>
         </div>
-        <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-sm text-foreground">
+        <div className="rounded-lg bg-card px-3 py-1.5 text-body-sm text-ink-body card-chrome">
           {favoriteIds.length} saved favorite{favoriteIds.length === 1 ? "" : "s"}
         </div>
       </div>
@@ -94,18 +94,17 @@ export function MovieGrid({
       ))}
 
       {totalPages > 1 && (
-        <div className="mt-6 flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-4">
+        <div className="mt-6 flex items-center justify-between rounded-lg bg-card px-4 py-3 card-chrome">
           <Button
             onClick={onPreviousPage}
             disabled={currentPage === 1}
             variant="outline"
             size="sm"
-            className="border-white/10"
           >
             <ChevronLeft className="h-4 w-4 mr-2" />
             Previous
           </Button>
-          <div className="text-sm text-muted-foreground">
+          <div className="text-body-sm text-ink-mute">
             Page <span className="font-semibold text-foreground">{currentPage}</span> of{" "}
             <span className="font-semibold text-foreground">{totalPages}</span>
           </div>
@@ -114,7 +113,6 @@ export function MovieGrid({
             disabled={currentPage === totalPages}
             variant="outline"
             size="sm"
-            className="border-white/10"
           >
             Next
             <ChevronRight className="h-4 w-4 ml-2" />

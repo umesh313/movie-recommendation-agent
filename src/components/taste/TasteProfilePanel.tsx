@@ -133,17 +133,17 @@ export function TasteProfilePanel({ isOpen, onClose }: TasteProfilePanelProps) {
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.95, opacity: 0 }}
-          className="glass rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+          className="card-chrome-modal rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="sticky top-0 z-10 flex items-center justify-between p-6 border-b border-white/10 bg-card/95 backdrop-blur">
+          <div className="sticky top-0 z-10 flex items-center justify-between p-6 border-b border-border bg-background/95 backdrop-blur">
             <div>
-              <h2 className="text-2xl font-bold flex items-center gap-2">
-                <Sparkles className="h-6 w-6 text-cinema-gold" />
+              <h2 className="text-display-sm font-semibold text-foreground flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-ink" />
                 Your Taste Profile
               </h2>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-body-sm text-ink-mute mt-1">
                 Help us understand your movie preferences
               </p>
             </div>
@@ -155,11 +155,11 @@ export function TasteProfilePanel({ isOpen, onClose }: TasteProfilePanelProps) {
           <div className="p-6 space-y-8">
             {/* Favorite Movies */}
             <section>
-              <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                <Film className="h-5 w-5 text-cinema-gold" />
+              <h3 className="text-body-md-strong text-foreground mb-3 flex items-center gap-2">
+                <Film className="h-5 w-5 text-ink" />
                 Favorite Movies
               </h3>
-              <p className="text-sm text-muted-foreground mb-4">
+              <p className="text-body-sm text-ink-mute mb-4">
                 Add 3-5 of your all-time favorite films
               </p>
               
@@ -169,35 +169,35 @@ export function TasteProfilePanel({ isOpen, onClose }: TasteProfilePanelProps) {
                   onChange={(e) => setNewMovieTitle(e.target.value)}
                   placeholder="Enter movie title..."
                   onKeyDown={(e) => e.key === "Enter" && handleAddMovie()}
-                  className="bg-background/60"
+                  className="bg-background"
                 />
-                <Button onClick={handleAddMovie} variant="cinema" size="icon">
+                <Button onClick={handleAddMovie} variant="default" size="icon">
                   <Plus className="h-4 w-4" />
                 </Button>
               </div>
 
               <div className="flex flex-wrap gap-2">
                 {localProfile?.favoriteMovies.map((movie, idx) => (
-                  <Badge key={`${movie.title}-${idx}`} variant="gold" className="px-3 py-1 gap-2">
+                  <Badge key={`${movie.title}-${idx}`} variant="secondary" className="px-3 py-1 gap-2">
                     {movie.title}
                     <button
                       onClick={() => removeFavoriteMovie(movie.tmdbId || idx)}
-                      className="hover:text-red-400 transition-colors"
+                      className="hover:text-error transition-colors"
                     >
                       <X className="h-3 w-3" />
                     </button>
                   </Badge>
                 ))}
                 {localProfile?.favoriteMovies.length === 0 && (
-                  <p className="text-sm text-muted-foreground italic">No favorite movies added yet</p>
+                  <p className="text-body-sm text-ink-mute italic">No favorite movies added yet</p>
                 )}
               </div>
             </section>
 
             {/* Preferred Genres */}
             <section>
-              <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                <Clapperboard className="h-5 w-5 text-cinema-gold" />
+              <h3 className="text-body-md-strong text-foreground mb-3 flex items-center gap-2">
+                <Clapperboard className="h-5 w-5 text-ink" />
                 Preferred Genres
               </h3>
               <div className="flex flex-wrap gap-2">
@@ -205,10 +205,10 @@ export function TasteProfilePanel({ isOpen, onClose }: TasteProfilePanelProps) {
                   <button
                     key={genre}
                     onClick={() => handleToggleGenre(genre)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                    className={`px-3 py-1.5 rounded-md text-caption font-medium transition-all ${
                       localProfile?.preferredGenres.includes(genre)
-                        ? "bg-cinema-gold text-cinema-navy shadow-lg shadow-cinema-gold/20"
-                        : "glass hover:bg-white/10 text-foreground"
+                        ? "bg-ink text-white"
+                        : "bg-card text-ink-body card-chrome hover:bg-canvas-soft"
                     }`}
                   >
                     {genre}
@@ -219,8 +219,8 @@ export function TasteProfilePanel({ isOpen, onClose }: TasteProfilePanelProps) {
 
             {/* Favorite Actors */}
             <section>
-              <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                <Users className="h-5 w-5 text-cinema-gold" />
+              <h3 className="text-body-md-strong text-foreground mb-3 flex items-center gap-2">
+                <Users className="h-5 w-5 text-ink" />
                 Favorite Actors
               </h3>
               <div className="flex gap-2 mb-3">
@@ -229,9 +229,9 @@ export function TasteProfilePanel({ isOpen, onClose }: TasteProfilePanelProps) {
                   onChange={(e) => setNewActor(e.target.value)}
                   placeholder="Enter actor name..."
                   onKeyDown={(e) => e.key === "Enter" && handleAddActor()}
-                  className="bg-background/60"
+                  className="bg-background"
                 />
-                <Button onClick={handleAddActor} variant="cinema" size="icon">
+                <Button onClick={handleAddActor} variant="default" size="icon">
                   <Plus className="h-4 w-4" />
                 </Button>
               </div>
@@ -241,7 +241,7 @@ export function TasteProfilePanel({ isOpen, onClose }: TasteProfilePanelProps) {
                     {actor}
                     <button
                       onClick={() => handleRemoveActor(actor)}
-                      className="hover:text-red-400 transition-colors"
+                      className="hover:text-error transition-colors"
                     >
                       <X className="h-3 w-3" />
                     </button>
@@ -252,8 +252,8 @@ export function TasteProfilePanel({ isOpen, onClose }: TasteProfilePanelProps) {
 
             {/* Favorite Directors */}
             <section>
-              <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                <Clapperboard className="h-5 w-5 text-cinema-gold" />
+              <h3 className="text-body-md-strong text-foreground mb-3 flex items-center gap-2">
+                <Clapperboard className="h-5 w-5 text-ink" />
                 Favorite Directors
               </h3>
               <div className="flex gap-2 mb-3">
@@ -262,9 +262,9 @@ export function TasteProfilePanel({ isOpen, onClose }: TasteProfilePanelProps) {
                   onChange={(e) => setNewDirector(e.target.value)}
                   placeholder="Enter director name..."
                   onKeyDown={(e) => e.key === "Enter" && handleAddDirector()}
-                  className="bg-background/60"
+                  className="bg-background"
                 />
-                <Button onClick={handleAddDirector} variant="cinema" size="icon">
+                <Button onClick={handleAddDirector} variant="default" size="icon">
                   <Plus className="h-4 w-4" />
                 </Button>
               </div>
@@ -274,7 +274,7 @@ export function TasteProfilePanel({ isOpen, onClose }: TasteProfilePanelProps) {
                     {director}
                     <button
                       onClick={() => handleRemoveDirector(director)}
-                      className="hover:text-red-400 transition-colors"
+                      className="hover:text-error transition-colors"
                     >
                       <X className="h-3 w-3" />
                     </button>
@@ -285,8 +285,8 @@ export function TasteProfilePanel({ isOpen, onClose }: TasteProfilePanelProps) {
 
             {/* Preferred Eras */}
             <section>
-              <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                <Star className="h-5 w-5 text-cinema-gold" />
+              <h3 className="text-body-md-strong text-foreground mb-3 flex items-center gap-2">
+                <Star className="h-5 w-5 text-ink" />
                 Preferred Eras
               </h3>
               <div className="flex flex-wrap gap-2">
@@ -294,10 +294,10 @@ export function TasteProfilePanel({ isOpen, onClose }: TasteProfilePanelProps) {
                   <button
                     key={era}
                     onClick={() => handleToggleEra(era)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                    className={`px-3 py-1.5 rounded-md text-caption font-medium transition-all ${
                       localProfile?.preferredEras.includes(era)
-                        ? "bg-cinema-gold text-cinema-navy shadow-lg shadow-cinema-gold/20"
-                        : "glass hover:bg-white/10 text-foreground"
+                        ? "bg-ink text-white"
+                        : "bg-card text-ink-body card-chrome hover:bg-canvas-soft"
                     }`}
                   >
                     {era}
@@ -308,12 +308,12 @@ export function TasteProfilePanel({ isOpen, onClose }: TasteProfilePanelProps) {
 
             {/* AI-Generated Summary */}
             {localProfile?.profileSummary && (
-              <section className="rounded-2xl border border-cinema-gold/20 bg-cinema-gold/5 p-4">
+              <section className="rounded-md bg-card p-4 hairline-inset-light">
                 <div className="flex items-start gap-3">
-                  <Heart className="h-5 w-5 text-cinema-gold shrink-0 mt-0.5" />
+                  <Heart className="h-5 w-5 text-ink shrink-0 mt-0.5" />
                   <div>
-                    <h4 className="font-semibold text-cinema-gold text-sm mb-1">Your Movie Taste</h4>
-                    <p className="text-sm text-foreground/90 leading-relaxed">
+                    <h4 className="eyebrow-mono text-ink-mute mb-1">Your Movie Taste</h4>
+                    <p className="text-body-sm text-foreground leading-relaxed">
                       {localProfile.profileSummary}
                     </p>
                   </div>
@@ -322,12 +322,12 @@ export function TasteProfilePanel({ isOpen, onClose }: TasteProfilePanelProps) {
             )}
 
             {/* Actions */}
-            <div className="flex gap-3 pt-4 border-t border-white/10">
+            <div className="flex gap-3 pt-4 border-t border-border">
               <Button
                 onClick={handleGenerateSummary}
                 disabled={isGenerating || !localProfile}
                 variant="outline"
-                className="flex-1 border-cinema-gold/30 text-cinema-gold hover:bg-cinema-gold/10"
+                className="flex-1"
               >
                 {isGenerating ? (
                   <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
@@ -338,7 +338,7 @@ export function TasteProfilePanel({ isOpen, onClose }: TasteProfilePanelProps) {
               </Button>
               <Button
                 onClick={handleSave}
-                variant="cinema"
+                variant="default"
                 className="flex-1"
               >
                 <Save className="h-4 w-4 mr-2" />

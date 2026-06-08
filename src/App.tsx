@@ -38,7 +38,6 @@ function AppContent() {
 
   const apiKeysMissing = !apiKeys.tmdb || !apiKeys.groq;
 
-  // Auto-scroll to recommendations on mobile when they appear
   useEffect(() => {
     if (recommendations.length > 0 && window.innerWidth < 1024) {
       setTimeout(() => {
@@ -53,7 +52,6 @@ function AppContent() {
   function handleCategorySelect(category: any, movies: FeaturedMovie[]) {
     setSelectedCategory(category.id);
     setCategoryMovies(movies);
-    // Clear recommendations when browsing categories
     reset();
   }
 
@@ -66,13 +64,11 @@ function AppContent() {
   return (
     <div className="min-h-screen">
       <div className="flex">
-        {/* Sidebar */}
         <Sidebar 
           onCategorySelect={handleCategorySelect}
           selectedCategory={selectedCategory}
         />
 
-        {/* Main Content */}
         <div className="flex-1 lg:ml-0 min-w-0">
           <div className="container max-w-7xl mx-auto px-4 py-6 sm:py-8 lg:pl-4 pl-14">
             <div className="mb-6">
@@ -83,18 +79,18 @@ function AppContent() {
             </div>
 
             {apiKeysMissing && (
-              <div className="mb-4 flex items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm">
-                <AlertCircle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+              <div className="mb-4 flex items-start gap-3 rounded-lg bg-ink p-4 text-body-sm">
+                <AlertCircle className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-medium text-amber-200">API keys required</p>
-                  <p className="text-muted-foreground mt-1">
-                    Copy <code className="text-cinema-gold">.env.example</code> to{" "}
-                    <code className="text-cinema-gold">.env</code> and add your{" "}
+                  <p className="font-medium text-white">API keys required</p>
+                  <p className="text-white/70 mt-1">
+                    Copy <code className="text-white/90">.env.example</code> to{" "}
+                    <code className="text-white/90">.env</code> and add your{" "}
                     <a
                       href="https://www.themoviedb.org/settings/api"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-cinema-gold hover:underline"
+                      className="text-white underline hover:no-underline"
                     >
                       TMDB
                     </a>{" "}
@@ -103,7 +99,7 @@ function AppContent() {
                       href="https://console.groq.com"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-cinema-gold hover:underline"
+                      className="text-white underline hover:no-underline"
                     >
                       Groq
                     </a>{" "}
@@ -114,9 +110,9 @@ function AppContent() {
             )}
 
             {error && !loading && (
-              <div className="mb-4 flex items-start gap-3 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm">
-                <AlertCircle className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
-                <p className="text-red-200">{error}</p>
+              <div className="mb-4 flex items-start gap-3 rounded-lg bg-error/10 p-4 text-body-sm hairline-inset-light">
+                <AlertCircle className="h-5 w-5 text-error shrink-0 mt-0.5" />
+                <p className="text-error">{error}</p>
               </div>
             )}
 
@@ -138,33 +134,33 @@ function AppContent() {
               <div className="lg:col-span-3 pb-8">
                 {actorData ? (
                   <div className="space-y-6">
-                    <div className="glass rounded-3xl p-6 border border-white/5">
+                    <div className="card-chrome-lg rounded-lg p-6">
                       <div className="flex items-start gap-6">
                         {actorData.person.profile_url && (
                           <img
                             src={actorData.person.profile_url}
                             alt={actorData.person.name}
-                            className="w-32 h-48 rounded-2xl object-cover shadow-lg"
+                            className="w-32 h-48 rounded-lg object-cover shadow-level-4"
                           />
                         )}
                         <div className="flex-1">
-                          <h2 className="text-3xl font-bold mb-2">{actorData.person.name}</h2>
+                          <h2 className="text-display-sm font-semibold text-foreground mb-2">{actorData.person.name}</h2>
                           {actorData.person.birthday && (
-                            <p className="text-sm text-muted-foreground mb-4">
+                            <p className="text-body-sm text-ink-mute mb-4">
                               Born: {new Date(actorData.person.birthday).toLocaleDateString()}
                             </p>
                           )}
-                          <p className="text-foreground/80 leading-relaxed mb-4">
+                          <p className="text-body-sm text-ink-body leading-relaxed mb-4">
                             {actorData.person.biography}
                           </p>
-                          <div className="flex gap-4 text-sm">
+                          <div className="flex gap-4 text-body-sm">
                             <div>
-                              <p className="font-semibold text-cinema-gold">{actorData.credits.movies.length}</p>
-                              <p className="text-muted-foreground">Films</p>
+                              <p className="font-semibold text-ink">{actorData.credits.movies.length}</p>
+                              <p className="text-ink-mute">Films</p>
                             </div>
                             <div>
-                              <p className="font-semibold text-cinema-gold">{actorData.credits.tvShows.length}</p>
-                              <p className="text-muted-foreground">TV Shows</p>
+                              <p className="font-semibold text-ink">{actorData.credits.tvShows.length}</p>
+                              <p className="text-ink-mute">TV Shows</p>
                             </div>
                           </div>
                         </div>
@@ -173,12 +169,12 @@ function AppContent() {
 
                     {actorData.credits.movies.length > 0 && (
                       <div>
-                        <h3 className="text-xl font-bold mb-4">Films</h3>
+                        <h3 className="text-display-sm font-semibold text-foreground mb-4">Films</h3>
                         <div className="space-y-3">
                           {actorData.credits.movies.map((movie) => (
-                            <div key={movie.id} className="glass rounded-xl p-3 border border-white/5">
-                              <p className="font-semibold">{movie.title}</p>
-                              <p className="text-sm text-muted-foreground">{movie.why_watch}</p>
+                            <div key={movie.id} className="card-chrome rounded-lg p-4">
+                              <p className="font-semibold text-foreground">{movie.title}</p>
+                              <p className="text-body-sm text-ink-mute mt-1">{movie.why_watch}</p>
                             </div>
                           ))}
                         </div>
@@ -187,12 +183,12 @@ function AppContent() {
 
                     {actorData.credits.tvShows.length > 0 && (
                       <div>
-                        <h3 className="text-xl font-bold mb-4">TV Shows</h3>
+                        <h3 className="text-display-sm font-semibold text-foreground mb-4">TV Shows</h3>
                         <div className="space-y-3">
                           {actorData.credits.tvShows.map((show) => (
-                            <div key={show.id} className="glass rounded-xl p-3 border border-white/5">
-                              <p className="font-semibold">{show.title}</p>
-                              <p className="text-sm text-muted-foreground">{show.why_watch}</p>
+                            <div key={show.id} className="card-chrome rounded-lg p-4">
+                              <p className="font-semibold text-foreground">{show.title}</p>
+                              <p className="text-body-sm text-ink-mute mt-1">{show.why_watch}</p>
                             </div>
                           ))}
                         </div>
@@ -221,18 +217,17 @@ function AppContent() {
                   <div className="space-y-8">
                     <FeaturedMovies />
                     
-                    <div className="glass rounded-3xl p-6 sm:p-8 border text-center">
-                      <h3 className="text-2xl font-bold mb-4">How can I help you today?</h3>
-                      <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-                        I'm CineMatch, your personal movie curator. Ask me for recommendations based on genres, moods, eras, 
-                        or specific ratings. I have access to a curated collection of highly-rated films and can help you 
-                        discover your next favorite movie.
+                    <div className="card-chrome-lg rounded-lg p-6 sm:p-8 text-center">
+                      <h3 className="text-display-md font-semibold text-foreground mb-4">How can I help you today?</h3>
+                      <p className="text-body-sm text-ink-mute mb-6 max-w-2xl mx-auto">
+                       🍿 What are you in the mood for today?
+Thriller, comedy, romance, sci-fi, Bollywood, Korean cinema—I've got recommendations.
                       </p>
                       <div className="flex flex-wrap justify-center gap-3">
-                        <span className="px-4 py-2 bg-white/5 rounded-full text-sm">"Show me action movies"</span>
-                        <span className="px-4 py-2 bg-white/5 rounded-full text-sm">"Recommend sci-fi films"</span>
-                        <span className="px-4 py-2 bg-white/5 rounded-full text-sm">"Movies with 7.9 rating"</span>
-                        <span className="px-4 py-2 bg-white/5 rounded-full text-sm">"Best comedies"</span>
+                        <span className="px-4 py-2 bg-card rounded-lg card-chrome text-body-sm text-ink-body">"Show me action movies"</span>
+                        <span className="px-4 py-2 bg-card rounded-lg card-chrome text-body-sm text-ink-body">"Recommend sci-fi films"</span>
+                        <span className="px-4 py-2 bg-card rounded-lg card-chrome text-body-sm text-ink-body">"Movies with 7.9 rating"</span>
+                        <span className="px-4 py-2 bg-card rounded-lg card-chrome text-body-sm text-ink-body">"Best comedies"</span>
                       </div>
                     </div>
                   </div>
@@ -240,7 +235,7 @@ function AppContent() {
               </div>
             </div>
 
-            <footer className="mt-8 pt-6 border-t border-white/5 text-center text-xs text-muted-foreground">
+            <footer className="mt-8 pt-6 border-t border-border text-center text-caption text-ink-mute">
               This product uses the TMDB API but is not endorsed or certified by TMDB.
             </footer>
           </div>

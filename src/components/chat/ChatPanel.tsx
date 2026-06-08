@@ -82,22 +82,22 @@ export function ChatPanel({
   const showSuggestions = messages.length <= 1 && !loading;
 
   return (
-    <div className="flex flex-col h-full glass rounded-2xl overflow-hidden">
+    <div className="flex flex-col h-full bg-background rounded-lg card-chrome overflow-hidden">
       {/* Header */}
-      <div className="relative px-4 py-4 border-b border-white/10 bg-gradient-to-r from-cinema-gold/10 via-transparent to-cinema-amber/10">
+      <div className="px-4 py-4 border-b border-border">
         <div className="flex items-center gap-3">
-          <div className="h-11 w-11 rounded-full bg-gradient-to-br from-cinema-gold to-cinema-amber flex items-center justify-center shadow-lg shadow-cinema-gold/20">
-            <Sparkles className="h-5 w-5 text-cinema-navy" />
+          <div className="h-9 w-9 rounded-lg bg-ink flex items-center justify-center shrink-0">
+            <Sparkles className="h-4 w-4 text-white" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="font-semibold text-sm uppercase tracking-[0.24em] text-cinema-gold/90">
+            <div className="font-medium text-body-sm-strong text-foreground">
               CineMatch Agent
             </div>
-            <div className="text-xs text-muted-foreground flex flex-wrap items-center gap-2 mt-1">
+            <div className="text-caption text-ink-mute flex items-center gap-2 mt-0.5">
               <span
                 className={cn(
-                  "h-1.5 w-1.5 rounded-full",
-                  apiKeysMissing ? "bg-red-500" : "bg-green-500 animate-pulse"
+                  "inline-block h-1.5 w-1.5 rounded-full",
+                  apiKeysMissing ? "bg-error" : "bg-success animate-pulse"
                 )}
               />
               {apiKeysMissing ? "API keys missing" : "Online · Movie expert"}
@@ -108,7 +108,6 @@ export function ChatPanel({
               variant="outline"
               size="sm"
               onClick={() => setHistoryOpen((open) => !open)}
-              className="border-white/10 text-sm text-muted-foreground hover:border-cinema-gold/30"
             >
               <History className="h-4 w-4 mr-2" />
               History
@@ -122,23 +121,23 @@ export function ChatPanel({
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="mt-4 overflow-hidden rounded-2xl border border-white/10 bg-background/90 p-3"
+              className="mt-4 overflow-hidden rounded-lg bg-card p-3"
             >
               <div className="flex items-center justify-between gap-3 mb-2">
-                <div className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
+                <div className="text-caption text-ink-mute">
                   Recent queries
                 </div>
                 <button
                   type="button"
                   onClick={onClearHistory}
-                  className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-cinema-gold"
+                  className="inline-flex items-center gap-1 text-caption text-ink-mute hover:text-ink transition-colors"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                   Clear
                 </button>
               </div>
               {history.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No recent queries yet.</p>
+                <p className="text-body-sm text-ink-mute">No recent queries yet.</p>
               ) : (
                 <div className="flex flex-wrap gap-2">
                   {history.map((query) => (
@@ -149,7 +148,7 @@ export function ChatPanel({
                         onHistorySelect(query);
                         setHistoryOpen(false);
                       }}
-                      className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-foreground transition hover:bg-white/10"
+                      className="rounded-md bg-canvas-soft px-3 py-1.5 text-body-sm text-ink-body transition hover:bg-canvas-soft-2 hover:text-ink"
                     >
                       {query}
                     </button>
@@ -187,9 +186,9 @@ export function ChatPanel({
 
           {typedText && (
             <div className="flex justify-start">
-              <div className="max-w-[90%] glass rounded-2xl rounded-bl-sm px-3.5 py-2.5 text-sm whitespace-pre-wrap">
+              <div className="max-w-[90%] bg-card text-foreground card-chrome rounded-2xl rounded-bl-sm px-3.5 py-2.5 text-body-sm whitespace-pre-wrap">
                 {typedText}
-                <span className="inline-block w-1.5 h-3.5 bg-cinema-gold/80 ml-0.5 animate-pulse" />
+                <span className="inline-block w-1.5 h-3.5 bg-ink ml-0.5 animate-pulse" />
               </div>
             </div>
           )}
@@ -200,9 +199,9 @@ export function ChatPanel({
               animate={{ opacity: 1 }}
               className="flex justify-start"
             >
-              <div className="glass rounded-2xl rounded-bl-sm px-4 py-3 flex items-center gap-3">
-                <Loader2 className="h-4 w-4 animate-spin text-cinema-gold" />
-                <span className="text-sm text-muted-foreground">
+              <div className="bg-card text-foreground card-chrome rounded-2xl rounded-bl-sm px-4 py-3 flex items-center gap-3">
+                <Loader2 className="h-4 w-4 animate-spin text-ink" />
+                <span className="text-body-sm text-ink-mute">
                   {statusLabel || getStatusText(status)}
                 </span>
               </div>
@@ -219,7 +218,7 @@ export function ChatPanel({
               key={s}
               onClick={() => send(s)}
               disabled={loading || apiKeysMissing}
-              className="text-xs px-3 py-1.5 rounded-full glass hover:bg-white/10 transition-colors disabled:opacity-40"
+              className="text-caption px-3 py-1.5 rounded-full bg-card text-ink-body card-chrome hover:bg-canvas-soft transition-colors disabled:opacity-40"
             >
               {s}
             </button>
@@ -233,7 +232,7 @@ export function ChatPanel({
           e.preventDefault();
           send(input);
         }}
-        className="p-3 border-t border-white/10 flex gap-2 bg-background/40"
+        className="p-3 border-t border-border flex gap-2 bg-card"
       >
         <Input
           value={input}
@@ -244,11 +243,11 @@ export function ChatPanel({
               : "What kind of movie are you in the mood for?"
           }
           disabled={loading || apiKeysMissing}
-          className="bg-background/60 border-white/10 focus-visible:ring-cinema-gold/50"
+          className="bg-background border-border focus-visible:ring-ring"
         />
         <Button
           type="submit"
-          variant="cinema"
+          variant="default"
           size="icon"
           disabled={loading || !input.trim() || apiKeysMissing}
           className="shrink-0"

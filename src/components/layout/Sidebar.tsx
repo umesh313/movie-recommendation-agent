@@ -3,18 +3,26 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   Menu, 
   X, 
-  Film, 
-  Heart, 
-  Laugh, 
-  Sword, 
-  Compass, 
-  BrainCircuit, 
-  BadgeAlert, 
-  HeartPulse,
   Sun,
   Moon,
   ChevronLeft,
-  Sparkles
+  Clapperboard,
+  Swords,
+  Drama,
+  Laugh,
+  Skull,
+  Heart,
+  Eye,
+  ScanFace,
+  Telescope,
+  Ghost,
+  Siren,
+  Lightbulb,
+  Music,
+  Landmark,
+  Rocket,
+  Gavel,
+  Pencil,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { featuredMovies, getFeaturedMoviesByGenre } from "@/data/featuredMovies";
@@ -27,14 +35,26 @@ interface Category {
 }
 
 const categories: Category[] = [
-  { id: "horror", name: "Horror", icon: <BrainCircuit className="h-4 w-4" />, genres: ["horror"] },
+  { id: "action", name: "Action", icon: <Swords className="h-4 w-4" />, genres: ["action"] },
+  { id: "adventure", name: "Adventure", icon: <Telescope className="h-4 w-4" />, genres: ["adventure"] },
+  { id: "animation", name: "Animation", icon: <Pencil className="h-4 w-4" />, genres: ["animation"] },
+  { id: "biography", name: "Biography", icon: <Pencil className="h-4 w-4" />, genres: ["biography"] },
   { id: "comedy", name: "Comedy", icon: <Laugh className="h-4 w-4" />, genres: ["comedy"] },
+  { id: "crime", name: "Crime", icon: <Gavel className="h-4 w-4" />, genres: ["crime"] },
+  { id: "documentary", name: "Documentary", icon: <Lightbulb className="h-4 w-4" />, genres: ["documentary"] },
+  { id: "drama", name: "Drama", icon: <Drama className="h-4 w-4" />, genres: ["drama"] },
+  { id: "family", name: "Family", icon: <Heart className="h-4 w-4" />, genres: ["family"] },
+  { id: "fantasy", name: "Fantasy", icon: <Ghost className="h-4 w-4" />, genres: ["fantasy"] },
+  { id: "history", name: "History", icon: <Landmark className="h-4 w-4" />, genres: ["history"] },
+  { id: "horror", name: "Horror", icon: <Skull className="h-4 w-4" />, genres: ["horror"] },
+  { id: "musical", name: "Musical", icon: <Music className="h-4 w-4" />, genres: ["musical"] },
+  { id: "mystery", name: "Mystery", icon: <ScanFace className="h-4 w-4" />, genres: ["mystery"] },
   { id: "romance", name: "Romance", icon: <Heart className="h-4 w-4" />, genres: ["romance"] },
-  { id: "action", name: "Action", icon: <Sword className="h-4 w-4" />, genres: ["action"] },
-  { id: "adventure", name: "Adventure", icon: <Compass className="h-4 w-4" />, genres: ["adventure"] },
-  { id: "thriller", name: "Psycho Thriller", icon: <BadgeAlert className="h-4 w-4" />, genres: ["thriller"] },
-  { id: "crime", name: "Crime Drama", icon: <Film className="h-4 w-4" />, genres: ["crime"] },
-  { id: "romcom", name: "Rom-Com", icon: <HeartPulse className="h-4 w-4" />, genres: ["romance", "comedy"] },
+  { id: "scifi", name: "Sci-Fi", icon: <Rocket className="h-4 w-4" />, genres: ["sci-fi", "science fiction"] },
+  { id: "thriller", name: "Thriller", icon: <Eye className="h-4 w-4" />, genres: ["thriller"] },
+  { id: "war", name: "War", icon: <Siren className="h-4 w-4" />, genres: ["war"] },
+  { id: "western", name: "Western", icon: <Swords className="h-4 w-4" />, genres: [] },
+  { id: "sport", name: "Sport", icon: <Swords className="h-4 w-4" />, genres: ["sport"] },
 ];
 
 interface SidebarProps {
@@ -64,7 +84,6 @@ export function Sidebar({ onCategorySelect }: SidebarProps) {
     if (onCategorySelect) {
       onCategorySelect(category, movies);
     }
-    // Close sidebar on mobile after selection
     if (window.innerWidth < 1024) {
       setIsOpen(false);
     }
@@ -81,7 +100,7 @@ export function Sidebar({ onCategorySelect }: SidebarProps) {
       {/* Mobile Menu Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-40 p-2 rounded-lg glass border border-white/10 text-foreground hover:text-cinema-gold transition-colors"
+        className="lg:hidden fixed top-4 left-4 z-40 p-2 rounded-lg bg-background text-foreground shadow-level-2 transition-colors hover:bg-canvas-soft"
         aria-label="Open menu"
       >
         <Menu className="h-5 w-5" />
@@ -100,14 +119,14 @@ export function Sidebar({ onCategorySelect }: SidebarProps) {
         )}
       </AnimatePresence>
 
-      {/* Sidebar */}
+      {/* Sidebar Nav */}
       <motion.aside
         initial={false}
         animate={isDesktop ? { x: 0 } : { x: isOpen ? 0 : -300 }}
         transition={{ type: "spring", damping: 25, stiffness: 200 }}
         className={`
-          fixed left-0 top-0 h-full w-72 glass border-r border-white/10 z-50
-          lg:static lg:translate-x-0 lg:z-0 lg:h-auto lg:min-h-screen
+          fixed left-0 top-0 h-full w-72 bg-background border-r border-border z-50
+          lg:static lg:translate-x-0 lg:z-0 lg:min-h-screen
           ${isOpen ? "shadow-2xl" : ""}
         `}
       >
@@ -115,24 +134,24 @@ export function Sidebar({ onCategorySelect }: SidebarProps) {
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-cinema-gold" />
-              <span className="font-bold text-lg">CineMatch</span>
+              <Clapperboard className="h-5 w-5 text-ink" />
+              <span className="font-semibold text-body-sm-strong text-ink">CineMatch</span>
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={toggleTheme}
-                className="p-2 rounded-lg hover:bg-white/5 transition-colors"
+                className="p-2 rounded-full hover:bg-canvas-soft transition-colors"
                 aria-label="Toggle theme"
               >
                 {theme === "dark" ? (
-                  <Sun className="h-4 w-4 text-amber-400" />
+                  <Sun className="h-4 w-4" />
                 ) : (
-                  <Moon className="h-4 w-4 text-slate-600" />
+                  <Moon className="h-4 w-4" />
                 )}
               </button>
               <button
                 onClick={handleClose}
-                className="lg:hidden p-2 rounded-lg hover:bg-white/5 transition-colors"
+                className="lg:hidden p-2 rounded-full hover:bg-canvas-soft transition-colors"
                 aria-label="Close menu"
               >
                 <X className="h-4 w-4" />
@@ -142,7 +161,7 @@ export function Sidebar({ onCategorySelect }: SidebarProps) {
 
           {/* Categories */}
           <div className="flex-1 overflow-y-auto">
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+            <p className="eyebrow-mono text-ink-mute mb-3 px-1">
               Categories
             </p>
             <nav className="space-y-1">
@@ -151,17 +170,17 @@ export function Sidebar({ onCategorySelect }: SidebarProps) {
                   key={category.id}
                   onClick={() => handleCategoryClick(category)}
                   className={`
-                    w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all
+                    w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-body-sm text-left transition-all
                     ${activeCategory?.id === category.id
-                      ? "bg-cinema-gold/20 text-cinema-gold border border-cinema-gold/30"
-                      : "hover:bg-white/5 text-foreground/80 hover:text-foreground"
+                      ? "bg-ink text-white font-medium"
+                      : "text-ink-body hover:bg-canvas-soft hover:text-ink"
                     }
                   `}
                 >
                   {category.icon}
-                  <span>{category.name}</span>
+                  <span className="flex-1">{category.name}</span>
                   {activeCategory?.id === category.id && (
-                    <ChevronLeft className="h-4 w-4 ml-auto" />
+                    <ChevronLeft className="h-4 w-4" />
                   )}
                 </button>
               ))}
@@ -170,20 +189,20 @@ export function Sidebar({ onCategorySelect }: SidebarProps) {
             {/* Category Movies Preview */}
             {categoryMovies && categoryMovies.length > 0 && (
               <div className="mt-6">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                <p className="eyebrow-mono text-ink-mute mb-3 px-1">
                   {activeCategory?.name} Movies ({categoryMovies.length})
                 </p>
-                <div className="space-y-2 max-h-64 overflow-y-auto">
+                <div className="space-y-1 max-h-64 overflow-y-auto">
                   {categoryMovies.slice(0, 5).map((movie) => (
                     <div
                       key={movie.rank}
-                      className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors cursor-pointer"
+                      className="flex items-center gap-3 px-3 py-2 rounded-lg text-body-sm text-ink-body hover:bg-canvas-soft hover:text-ink transition-colors cursor-pointer"
                     >
-                      <span className="text-xs text-muted-foreground w-6">#{movie.rank}</span>
+                      <span className="text-ink-mute w-5 shrink-0 text-caption">#{movie.rank}</span>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{movie.title}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {movie.year} • {movie.imdbRating}/10
+                        <p className="truncate">{movie.title}</p>
+                        <p className="text-caption text-ink-mute">
+                          {movie.year} · {movie.imdbRating}/10
                         </p>
                       </div>
                     </div>
@@ -194,8 +213,8 @@ export function Sidebar({ onCategorySelect }: SidebarProps) {
           </div>
 
           {/* Footer */}
-          <div className="pt-4 border-t border-white/10 mt-4">
-            <p className="text-xs text-muted-foreground text-center">
+          <div className="pt-4 border-t border-border mt-4">
+            <p className="text-caption text-ink-mute text-center">
               {featuredMovies.length} Featured Films
             </p>
           </div>

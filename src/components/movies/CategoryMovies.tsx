@@ -64,8 +64,8 @@ export function CategoryMovies({ movies, categoryName }: CategoryMoviesProps) {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
-          <Film className="h-12 w-12 text-cinema-gold/40 mx-auto mb-4 animate-pulse" />
-          <p className="text-muted-foreground">Loading {categoryName} movies...</p>
+          <Film className="h-12 w-12 text-ink-mute/40 mx-auto mb-4 animate-pulse" />
+          <p className="text-body-sm text-ink-mute">Loading {categoryName} movies...</p>
         </div>
       </div>
     );
@@ -75,8 +75,8 @@ export function CategoryMovies({ movies, categoryName }: CategoryMoviesProps) {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
-          <Film className="h-12 w-12 text-muted-foreground/40 mx-auto mb-4" />
-          <p className="text-muted-foreground">No movies found in this category</p>
+          <Film className="h-12 w-12 text-ink-mute/40 mx-auto mb-4" />
+          <p className="text-body-sm text-ink-mute">No movies found in this category</p>
         </div>
       </div>
     );
@@ -86,12 +86,12 @@ export function CategoryMovies({ movies, categoryName }: CategoryMoviesProps) {
     <>
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-gradient-to-br from-cinema-gold/20 to-cinema-gold/5 rounded-xl">
-            <Film className="h-6 w-6 text-cinema-gold" />
+          <div className="p-2 bg-card rounded-lg card-chrome">
+            <Film className="h-5 w-5 text-ink" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold">{categoryName} Movies</h2>
-            <p className="text-sm text-muted-foreground">
+            <h2 className="text-display-sm font-semibold text-foreground">{categoryName} Movies</h2>
+            <p className="text-body-sm text-ink-mute">
               {movies.length} featured films in this category
             </p>
           </div>
@@ -105,9 +105,9 @@ export function CategoryMovies({ movies, categoryName }: CategoryMoviesProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.03 }}
               onClick={() => handleClick(movie)}
-              className="group relative glass rounded-xl overflow-hidden border border-white/5 hover:border-cinema-gold/30 transition-all duration-300 hover:shadow-lg hover:shadow-cinema-gold/10 cursor-pointer"
+              className="group relative card-chrome rounded-lg overflow-hidden transition-all duration-300 hover:shadow-level-4 cursor-pointer"
             >
-              <div className="aspect-[2/3] relative overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900">
+              <div className="aspect-[2/3] relative overflow-hidden bg-muted">
                 {movie.posterUrl ? (
                   <>
                     <img
@@ -119,35 +119,35 @@ export function CategoryMovies({ movies, categoryName }: CategoryMoviesProps) {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
                   </>
                 ) : (
-                  <>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-5xl font-bold text-white/5">#{movie.rank}</span>
-                    </div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-4xl font-bold text-ink-mute/20">#{movie.rank}</span>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
-                  </>
+                  </div>
                 )}
               </div>
               
               <div className="absolute bottom-0 left-0 right-0 p-3">
-                <h3 className="font-semibold text-sm leading-tight mb-2 line-clamp-2 drop-shadow-lg">
+                <h3 className="font-semibold text-body-sm leading-tight mb-2 line-clamp-2 text-white drop-shadow-lg">
                   {movie.title}
                 </h3>
                 
-                <div className="flex items-center justify-between text-xs">
+                <div className="flex items-center justify-between text-caption">
                   <span className="text-white/70">{movie.year}</span>
-                  <div className="flex items-center gap-1 text-cinema-gold">
-                    <span className="text-[10px]">★</span>
+                  <div className="flex items-center gap-1 text-white">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="#fbbf24" className="shrink-0">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    </svg>
                     <span className="font-medium">{movie.imdbRating}</span>
                   </div>
                 </div>
               </div>
 
-              <div className="absolute top-2 right-2 px-2 py-1 bg-cinema-gold/20 backdrop-blur-sm rounded-full text-xs text-cinema-gold font-medium">
+              <div className="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded text-caption text-white font-medium">
                 #{movie.rank}
               </div>
 
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="bg-black/60 backdrop-blur-sm px-4 py-2 rounded-full text-sm text-white font-medium">
+                <div className="bg-black/60 backdrop-blur-sm px-4 py-2 rounded text-body-sm text-white font-medium">
                   View Details
                 </div>
               </div>

@@ -12,10 +12,10 @@ export function MessageBubble({ message }: MessageBubbleProps) {
     <div className={cn("flex", isUser ? "justify-end" : "justify-start")}>
       <div
         className={cn(
-          "max-w-[90%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed whitespace-pre-wrap break-words",
+          "max-w-[90%] rounded-2xl px-3.5 py-2.5 text-body-sm leading-relaxed whitespace-pre-wrap break-words",
           isUser
-            ? "bg-gradient-to-br from-cinema-gold to-cinema-amber text-cinema-navy font-medium rounded-br-sm"
-            : "glass rounded-bl-sm text-foreground/90"
+            ? "bg-ink text-white rounded-tr-sm"
+            : "bg-card text-foreground card-chrome rounded-tl-sm"
         )}
       >
         {message.content}

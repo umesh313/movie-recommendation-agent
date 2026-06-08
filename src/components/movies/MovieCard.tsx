@@ -30,8 +30,8 @@ export function MovieCard({
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: index * 0.1, duration: 0.45, ease: "easeOut" }}
-        whileHover={{ y: -4 }}
-        className="glass rounded-3xl overflow-hidden border border-white/5 shadow-2xl shadow-black/10 transition-all duration-300 hover:border-cinema-gold/30 hover:shadow-black/15"
+        whileHover={{ y: -2 }}
+        className="card-chrome-lg rounded-lg overflow-hidden transition-all duration-300 hover:shadow-level-4"
       >
         <div className="flex flex-col sm:flex-row">
           {/* Poster */}
@@ -48,25 +48,18 @@ export function MovieCard({
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
             ) : (
-              <div className="w-full h-full min-h-[200px] flex items-center justify-center text-muted-foreground text-sm">
+              <div className="w-full h-full min-h-[200px] flex items-center justify-center text-ink-mute text-body-sm">
                 No poster
               </div>
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 sm:hidden" />
-            <Badge
-              variant="gold"
-              className="absolute top-2 right-2 flex items-center gap-1 shadow-lg"
-            >
-              <Star className="h-3 w-3 fill-current" />
-              {movie.vote_average.toFixed(1)}
-            </Badge>
             <button
               type="button"
               onClick={() => onToggleFavorite(movie.id)}
-              className="absolute left-2 top-2 rounded-full bg-background/80 p-2 text-cinema-gold shadow-lg shadow-black/20 transition hover:bg-cinema-gold/15"
+              className="absolute left-2 top-2 rounded-full bg-white/90 p-1.5 text-ink shadow-level-1 transition-colors hover:bg-ink hover:text-white"
               aria-label={isFavorite ? "Remove favorite" : "Add favorite"}
             >
-              <Heart className={`h-4 w-4 ${isFavorite ? "fill-current text-cinema-gold" : "text-white/80"}`} />
+              <Heart className={`h-4 w-4 ${isFavorite ? "fill-current" : ""}`} />
             </button>
           </div>
 
@@ -74,15 +67,11 @@ export function MovieCard({
           <div className="flex-1 p-4 sm:p-5 flex flex-col gap-3">
             <div>
               <div className="flex flex-wrap items-start justify-between gap-2">
-                <h3 className="font-display text-xl font-bold text-foreground leading-tight">
+                <h3 className="text-display-sm text-foreground leading-tight">
                   {movie.title}
                 </h3>
-                <Badge variant="gold" className="hidden sm:flex items-center gap-1 shrink-0">
-                  <Star className="h-3 w-3 fill-current" />
-                  {movie.vote_average.toFixed(1)}
-                </Badge>
               </div>
-              <div className="flex flex-wrap items-center gap-2 mt-1.5 text-xs text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-2 mt-1.5 text-caption text-ink-mute">
                 <span>{year}</span>
                 {movie.runtime && (
                   <>
@@ -103,18 +92,18 @@ export function MovieCard({
               </div>
             </div>
 
-            <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed">
+            <p className="text-body-sm text-ink-body line-clamp-3 leading-relaxed">
               {movie.overview}
             </p>
 
-            <div className="rounded-lg border border-cinema-gold/20 bg-cinema-gold/5 p-3 mt-auto">
-              <p className="text-xs font-semibold text-cinema-gold uppercase tracking-wide mb-1">
+            <div className="rounded-md bg-card p-3 mt-auto hairline-inset-light">
+              <p className="eyebrow-mono text-ink-mute mb-1">
                 Why watch it
               </p>
-              <p className="text-sm text-foreground/90 leading-relaxed">
+              <p className="text-body-sm text-foreground leading-relaxed">
                 {movie.why_watch}
               </p>
-              <p className="text-xs text-muted-foreground mt-2 italic">
+              <p className="text-caption text-ink-mute mt-2 italic">
                 {movie.highlight}
               </p>
             </div>
@@ -124,9 +113,9 @@ export function MovieCard({
                 variant="outline"
                 size="sm"
                 onClick={() => setTrailerOpen(true)}
-                className="w-fit border-cinema-gold/30 hover:bg-cinema-gold/10 hover:text-cinema-gold"
+                className="w-fit"
               >
-                <Play className="h-4 w-4 mr-1.5 fill-current" />
+                <Play className="h-4 w-4 mr-1.5" />
                 Watch Trailer
               </Button>
             )}

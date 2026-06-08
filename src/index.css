@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,64 +7,57 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 230 25% 5%;
-
+    --foreground: 0 0% 9%;
     --card: 0 0% 98%;
-    --card-foreground: 230 25% 5%;
-
+    --card-foreground: 0 0% 9%;
     --popover: 0 0% 98%;
-    --popover-foreground: 230 25% 5%;
-
-    --primary: 43 96% 50%;
-    --primary-foreground: 230 25% 5%;
-
+    --popover-foreground: 0 0% 9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 0 0% 92%;
-    --secondary-foreground: 230 15% 15%;
-
+    --secondary-foreground: 0 0% 15%;
     --muted: 0 0% 92%;
-    --muted-foreground: 230 10% 40%;
-
-    --accent: 43 80% 45%;
-    --accent-foreground: 230 25% 5%;
-
-    --destructive: 0 84% 37%;
+    --muted-foreground: 0 0% 53%;
+    --accent: 0 0% 92%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 93% 47%;
     --destructive-foreground: 0 0% 98%;
-
     --border: 0 0% 85%;
     --input: 0 0% 85%;
-    --ring: 43 96% 50%;
+    --ring: 0 0% 9%;
+    --radius: 0.5rem;
 
-    --radius: 0.75rem;
+    /* Ink hex values for light mode */
+    --ink-hex: #171717;
+    --ink-body-hex: #4d4d4d;
+    --ink-mute-hex: #888888;
   }
 
   .dark {
-    --background: 230 25% 5%;
-    --foreground: 45 30% 96%;
+    --background: 0 0% 5%;
+    --foreground: 0 0% 95%;
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 0 0% 95%;
+    --primary-foreground: 0 0% 5%;
+    --secondary: 0 0% 14%;
+    --secondary-foreground: 0 0% 85%;
+    --muted: 0 0% 14%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 0 0% 14%;
+    --accent-foreground: 0 0% 95%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 0 0% 85%;
 
-    --card: 230 20% 8%;
-    --card-foreground: 45 30% 96%;
-
-    --popover: 230 20% 8%;
-    --popover-foreground: 45 30% 96%;
-
-    --primary: 43 96% 56%;
-    --primary-foreground: 230 25% 5%;
-
-    --secondary: 230 15% 14%;
-    --secondary-foreground: 45 20% 90%;
-
-    --muted: 230 15% 14%;
-    --muted-foreground: 230 10% 55%;
-
-    --accent: 43 80% 45%;
-    --accent-foreground: 230 25% 5%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 230 15% 18%;
-    --input: 230 15% 18%;
-    --ring: 43 96% 56%;
+    /* Ink hex values for dark mode - lightened for readability */
+    --ink-hex: #ededed;
+    --ink-body-hex: #a1a1a1;
+    --ink-mute-hex: #666666;
   }
 }
 
@@ -74,34 +69,26 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
     min-height: 100vh;
-    background: radial-gradient(ellipse at top, var(--bg-top), var(--bg-mid), var(--bg-bottom));
   }
 
-  :root {
-    --bg-top: #f0f0f5;
-    --bg-mid: #e8e8ee;
-    --bg-bottom: #dddde3;
+  /* Font smoothing */
+  *, *::before, *::after {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  :root.dark {
-    --bg-top: #1a1a2e;
-    --bg-mid: #0a0a0f;
-    --bg-bottom: #050508;
+  ::selection {
+    background-color: #171717;
+    color: #f2f2f2;
+  }
+
+  .dark ::selection {
+    background-color: #ebebeb;
+    color: #171717;
   }
 }
 
-/* Film grain overlay */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0.03;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-}
-
-/* Custom scrollbar */
+/* Custom scrollbar - Vercel subtle */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -112,31 +99,177 @@ body::before {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--muted-foreground) / 0.3);
+  background: hsl(0 0% 53% / 0.2);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--muted-foreground) / 0.5);
+  background: hsl(0 0% 53% / 0.35);
+}
+
+@media (min-width: 1024px) {
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
 }
 
 @layer utilities {
-  .glass {
-    @apply bg-card/60 backdrop-blur-xl border;
-    border-color: var(--glass-border);
+  /* Vercel mesh gradient - the only decoration */
+  .mesh-gradient {
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 30%, rgba(0, 124, 240, 0.15) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 60% 20%, rgba(121, 40, 202, 0.12) 0%, transparent 50%),
+      radial-gradient(ellipse 70% 40% at 80% 50%, rgba(255, 0, 128, 0.10) 0%, transparent 50%),
+      radial-gradient(ellipse 50% 40% at 40% 70%, rgba(80, 227, 194, 0.10) 0%, transparent 50%);
   }
 
-  .text-gradient-gold {
-    @apply bg-gradient-to-r from-cinema-gold via-cinema-amber to-cinema-gold bg-clip-text text-transparent;
-  }
-}
-
-@layer base {
-  :root {
-    --glass-border: hsl(0 0% 85% / 0.5);
+  .mesh-gradient-strong {
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 30%, rgba(0, 124, 240, 0.25) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 60% 20%, rgba(121, 40, 202, 0.20) 0%, transparent 50%),
+      radial-gradient(ellipse 70% 40% at 80% 50%, rgba(255, 0, 128, 0.18) 0%, transparent 50%),
+      radial-gradient(ellipse 50% 40% at 40% 70%, rgba(80, 227, 194, 0.15) 0%, transparent 50%);
   }
 
-  :root.dark {
-    --glass-border: hsl(0 0% 100% / 0.1);
+  /* Vercel card chrome: inset hairline + stacked shadow */
+  .card-chrome {
+    @apply bg-card text-foreground;
+    box-shadow:
+      0px 2px 2px #0000000a,
+      0px 8px 8px -8px #0000000a,
+      0 0 0 1px #00000014;
+  }
+
+  .card-chrome-lg {
+    @apply bg-card text-foreground;
+    box-shadow:
+      0px 2px 2px #0000000a,
+      0px 8px 16px -4px #0000000a,
+      0 0 0 1px #00000014;
+  }
+
+  .card-chrome-modal {
+    @apply bg-background text-foreground;
+    box-shadow:
+      0px 1px 1px #00000005,
+      0px 8px 16px -4px #0000000a,
+      0px 24px 32px -8px #0000000f,
+      0 0 0 1px #00000014;
+  }
+
+  /* Inset hairline ring (Level 1) */
+  .hairline-inset {
+    box-shadow: 0 0 0 1px #00000014;
+  }
+
+  .hairline-inset-light {
+    box-shadow: 0 0 0 1px #ebebeb;
+  }
+
+  /* Vercel pill button base */
+  .btn-pill {
+    @apply inline-flex items-center justify-center;
+    border-radius: 100px;
+    font-weight: 500;
+    transition: all 0.15s ease;
+  }
+
+  .btn-pill-primary {
+    @apply btn-pill;
+    background-color: #171717;
+    color: #ffffff;
+  }
+
+  .btn-pill-primary:hover {
+    opacity: 0.85;
+  }
+
+  .btn-pill-secondary {
+    @apply btn-pill;
+    background-color: #ffffff;
+    color: #171717;
+    box-shadow: 0 0 0 1px #00000014;
+  }
+
+  .btn-pill-secondary:hover {
+    background-color: #fafafa;
+  }
+
+  /* Ink text tokens - use foreground/muted-foreground for dark mode compatibility */
+  .text-ink {
+    color: var(--ink-hex);
+  }
+
+  .text-ink-body {
+    color: var(--ink-body-hex);
+  }
+
+  .text-ink-mute {
+    color: var(--ink-mute-hex);
+  }
+
+  /* Mono technical eyebrow */
+  .eyebrow-mono {
+    font-family: "Geist Mono", "JetBrains Mono", ui-monospace, monospace;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  /* Display headline with negative tracking */
+  .headline-xl {
+    font-size: 48px;
+    font-weight: 600;
+    line-height: 48px;
+    letter-spacing: -2.4px;
+  }
+
+  .headline-lg {
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 40px;
+    letter-spacing: -1.28px;
+  }
+
+  /* Sentence-case voice - force lowercase to sentence case */
+  .sentence-case::first-letter {
+    text-transform: uppercase;
+  }
+
+  /* Brand gradient text (uses develop → preview → ship stops) */
+  .text-brand-gradient {
+    background: linear-gradient(135deg, #007cf0, #00dfd8, #7928ca, #ff0080, #ff4d4d, #f9cb28);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Dark mode adjustments for card chrome */
+  .dark .card-chrome {
+    box-shadow:
+      0px 2px 2px #0000000a,
+      0px 8px 8px -8px #0000000a,
+      0 0 0 1px #ffffff14;
+  }
+
+  .dark .card-chrome-lg {
+    box-shadow:
+      0px 2px 2px #0000000a,
+      0px 8px 16px -4px #0000000a,
+      0 0 0 1px #ffffff14;
+  }
+
+  .dark .card-chrome-modal {
+    box-shadow:
+      0px 1px 1px #00000005,
+      0px 8px 16px -4px #0000000a,
+      0px 24px 32px -8px #0000000f,
+      0 0 0 1px #ffffff14;
+  }
+
+  .dark .hairline-inset-light {
+    box-shadow: 0 0 0 1px #ffffff14;
   }
 }

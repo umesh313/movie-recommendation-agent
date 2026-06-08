@@ -40,7 +40,6 @@ export function FeaturedMovieModal({ movie, isOpen, onClose }: FeaturedMovieModa
   async function fetchMovieDetails() {
     setLoading(true);
     try {
-      // Search for the movie to get TMDB ID
       const searchResponse = await fetch(
         `https://api.themoviedb.org/3/search/movie?api_key=${import.meta.env.VITE_TMDB_API_KEY}&query=${encodeURIComponent(movie.title)}&include_adult=false`
       );
@@ -49,13 +48,11 @@ export function FeaturedMovieModal({ movie, isOpen, onClose }: FeaturedMovieModa
       if (searchData.results && searchData.results.length > 0) {
         const movieId = searchData.results[0].id;
         
-        // Fetch full movie details
         const detailsResponse = await fetch(
           `https://api.themoviedb.org/3/movie/${movieId}?api_key=${import.meta.env.VITE_TMDB_API_KEY}`
         );
         const detailsData = await detailsResponse.json();
         
-        // Fetch trailer
         let trailerKey = null;
         try {
           const videosResponse = await fetch(
@@ -73,7 +70,7 @@ export function FeaturedMovieModal({ movie, isOpen, onClose }: FeaturedMovieModa
             trailerKey = trailer.key;
           }
         } catch {
-          // Trailer fetch failed, continue without it
+          // Trailer fetch failed
         }
 
         setDetails({
@@ -119,25 +116,25 @@ export function FeaturedMovieModal({ movie, isOpen, onClose }: FeaturedMovieModa
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
             >
-              <div className="pointer-events-auto glass rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-white/10 shadow-2xl">
+              <div className="pointer-events-auto card-chrome-modal rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
                 {loading ? (
                   <div className="flex items-center justify-center p-12">
                     <div className="text-center">
-                      <Film className="h-12 w-12 text-cinema-gold/40 mx-auto mb-4 animate-pulse" />
-                      <p className="text-muted-foreground">Loading movie details...</p>
+                      <Film className="h-12 w-12 text-ink-mute/40 mx-auto mb-4 animate-pulse" />
+                      <p className="text-body-sm text-ink-mute">Loading movie details...</p>
                     </div>
                   </div>
                 ) : details ? (
                   <div className="relative">
-                    {/* Hero section with backdrop */}
-                    <div className="relative h-64 sm:h-80 overflow-hidden rounded-t-3xl">
+                    {/* Hero section */}
+                    <div className="relative h-64 sm:h-80 overflow-hidden rounded-t-lg">
                       {posterUrlString ? (
                         <div 
                           className="absolute inset-0 bg-cover bg-center blur-xl opacity-50"
                           style={{ backgroundImage: `url(${posterUrlString})` }}
                         />
                       ) : (
-                        <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900" />
+                        <div className="absolute inset-0 bg-gradient-to-br from-ink to-ink-body" />
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
                       
@@ -152,43 +149,39 @@ export function FeaturedMovieModal({ movie, isOpen, onClose }: FeaturedMovieModa
                         {posterUrlString ? (
                           <div className="relative shrink-0 hidden sm:block">
                             {!posterLoaded && (
-                              <div className="w-32 h-48 bg-gray-800 rounded-lg animate-pulse" />
+                              <div className="w-32 h-48 bg-muted rounded-lg animate-pulse" />
                             )}
                             <img
                               src={posterUrlString}
                               alt={details.title}
-                              className="w-32 h-48 object-cover rounded-lg shadow-2xl"
+                              className="w-32 h-48 object-cover rounded-lg shadow-level-4"
                               onLoad={() => setPosterLoaded(true)}
                             />
                           </div>
                         ) : null}
                         
                         <div className="flex-1">
-                          <h2 className="text-3xl font-bold mb-2">{details.title}</h2>
-                          <div className="flex flex-wrap items-center gap-3 text-sm">
-                            <div className="flex items-center gap-1 text-cinema-gold">
-                              <Star className="h-4 w-4 fill-current" />
-                              <span className="font-semibold">{details.vote_average.toFixed(1)}</span>
-                              <span className="text-muted-foreground">/10</span>
+                          <h2 className="text-display-lg text-foreground mb-2">{details.title}</h2>
+                          <div className="flex flex-wrap items-center gap-3 text-body-sm">
+                            <div className="flex items-center gap-1">
+                              <Star className="h-4 w-4 text-amber-400 fill-current" />
+                              <span className="font-semibold text-ink">{movie.imdbRating}</span>
+                              <span className="text-ink-mute">/10 IMDb</span>
                             </div>
-                            <span className="text-muted-foreground">•</span>
-                            <div className="flex items-center gap-1 text-muted-foreground">
+                            <span className="text-ink-mute">·</span>
+                            <div className="flex items-center gap-1 text-ink-mute">
                               <Calendar className="h-4 w-4" />
                               <span>{year}</span>
                             </div>
                             {details.runtime && (
                               <>
-                                <span className="text-muted-foreground">•</span>
-                                <div className="flex items-center gap-1 text-muted-foreground">
+                                <span className="text-ink-mute">·</span>
+                                <div className="flex items-center gap-1 text-ink-mute">
                                   <Clock className="h-4 w-4" />
                                   <span>{Math.floor(details.runtime / 60)}h {details.runtime % 60}m</span>
                                 </div>
-                            </>
+                              </>
                             )}
-                            <div className="flex items-center gap-1 text-muted-foreground">
-                              <Star className="h-4 w-4" />
-                              <span>IMDb: {movie.imdbRating}/10</span>
-                            </div>
                           </div>
                         </div>
                       </div>
@@ -200,7 +193,7 @@ export function FeaturedMovieModal({ movie, isOpen, onClose }: FeaturedMovieModa
                       {details.genres.length > 0 && (
                         <div className="flex flex-wrap gap-2">
                           {details.genres.slice(0, 5).map((genre) => (
-                            <Badge key={genre.id} variant="outline" className="text-xs">
+                            <Badge key={genre.id} variant="outline" className="text-caption">
                               {genre.name}
                             </Badge>
                           ))}
@@ -209,36 +202,35 @@ export function FeaturedMovieModal({ movie, isOpen, onClose }: FeaturedMovieModa
 
                       {/* Overview */}
                       <div>
-                        <h3 className="text-lg font-semibold mb-2">About</h3>
-                        <p className="text-muted-foreground leading-relaxed">
+                        <h3 className="text-body-md-strong text-foreground mb-2">About</h3>
+                        <p className="text-body-sm text-ink-body leading-relaxed">
                           {details.overview || "No description available."}
                         </p>
                       </div>
 
                       {/* Why Watch */}
-                      <div className="rounded-xl border border-cinema-gold/20 bg-cinema-gold/5 p-4">
-                        <h3 className="text-sm font-semibold text-cinema-gold uppercase tracking-wide mb-2">
+                      <div className="rounded-md bg-card p-4 hairline-inset-light">
+                        <p className="eyebrow-mono text-ink-mute mb-2">
                           Why You Should Watch
-                        </h3>
-                        <p className="text-foreground/90 leading-relaxed">
+                        </p>
+                        <p className="text-body-sm text-foreground leading-relaxed">
                           Rated {movie.imdbRating}/10 on IMDb with {movie.votes} votes. 
                           This critically acclaimed film from {year} is part of our curated 
                           collection of the finest movies. {details.genres.slice(0, 2).map(g => g.name).join(" and ")} 
                           {details.genres.length > 2 ? " and more" : ""} genre film 
                           that showcases exceptional storytelling and cinematography.
                         </p>
-                        <p className="text-xs text-muted-foreground mt-3 italic">
-                          Featured Pick #{movie.rank} • Handpicked for quality
+                        <p className="text-caption text-ink-mute mt-3 italic">
+                          Featured Pick #{movie.rank} · Handpicked for quality
                         </p>
                       </div>
 
                       {/* Trailer */}
                       {details.trailer_key && (
                         <div>
-                          <h3 className="text-lg font-semibold mb-3">Trailer</h3>
+                          <h3 className="text-body-md-strong text-foreground mb-3">Trailer</h3>
                           <Button
                             onClick={() => setTrailerOpen(true)}
-                            className="w-full sm:w-auto border-cinema-gold/30 hover:bg-cinema-gold/10 hover:text-cinema-gold"
                             variant="outline"
                             size="lg"
                           >
@@ -251,7 +243,7 @@ export function FeaturedMovieModal({ movie, isOpen, onClose }: FeaturedMovieModa
                   </div>
                 ) : (
                   <div className="p-12 text-center">
-                    <p className="text-muted-foreground">Failed to load movie details.</p>
+                    <p className="text-body-sm text-ink-mute">Failed to load movie details.</p>
                     <Button onClick={onClose} variant="outline" className="mt-4">
                       Close
                     </Button>
@@ -263,7 +255,6 @@ export function FeaturedMovieModal({ movie, isOpen, onClose }: FeaturedMovieModa
         )}
       </AnimatePresence>
 
-      {/* Trailer Modal */}
       {details?.trailer_key && (
         <TrailerModal
           open={trailerOpen}
