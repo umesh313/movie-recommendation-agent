@@ -218,11 +218,7 @@ function AppContent() {
                     <FeaturedMovies />
                     
                     <div className="card-chrome-lg rounded-lg p-6 sm:p-8 text-center">
-                      <h3 className="text-display-md font-semibold text-foreground mb-4">How can I help you today?</h3>
-                      <p className="text-body-sm text-ink-mute mb-6 max-w-2xl mx-auto">
-                       🍿 What are you in the mood for today?
-Thriller, comedy, romance, sci-fi, Bollywood, Korean cinema—I've got recommendations.
-                      </p>
+                      <h3 className="text-body-md font-semibold text-foreground mb-4">Hi! I'm CineMatch - your movie expert!<br />Ask me for recommendations</h3>
                       <div className="flex flex-wrap justify-center gap-3">
                         <span className="px-4 py-2 bg-card rounded-lg card-chrome text-body-sm text-ink-body">"Show me action movies"</span>
                         <span className="px-4 py-2 bg-card rounded-lg card-chrome text-body-sm text-ink-body">"Recommend sci-fi films"</span>
