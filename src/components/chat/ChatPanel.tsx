@@ -9,9 +9,11 @@ import { cn } from "@/lib/utils";
 import type { AgentStatus, ChatMessage } from "@/types/movie";
 
 const SUGGESTIONS = [
-  "Dark sci-fi from the 2010s",
-  "Feel-good comedy for a rainy day",
-  "Mind-bending thriller like Inception",
+  "Recommend a gripping thriller",
+  "Show me the best comedies",
+  "Popular sci-fi movies",
+  "Best Bollywood films",
+  "Korean cinema recommendations",
 ];
 
 interface ChatPanelProps {
@@ -212,17 +214,22 @@ export function ChatPanel({
 
       {/* Suggestions */}
       {showSuggestions && (
-        <div className="px-3 pb-2 flex flex-wrap gap-1.5">
-          {SUGGESTIONS.map((s) => (
-            <button
-              key={s}
-              onClick={() => send(s)}
-              disabled={loading || apiKeysMissing}
-              className="text-caption px-3 py-1.5 rounded-full bg-card text-ink-body card-chrome hover:bg-canvas-soft transition-colors disabled:opacity-40"
-            >
-              {s}
-            </button>
-          ))}
+        <div className="px-3 pb-2 flex flex-col gap-1.5">
+          <p className="text-caption text-ink-mute">
+            Thriller, comedy, romance, sci-fi, Bollywood, Korean cinema—I've got recommendations.
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {SUGGESTIONS.map((s) => (
+              <button
+                key={s}
+                onClick={() => send(s)}
+                disabled={loading || apiKeysMissing}
+                className="text-caption px-3 py-1.5 rounded-full bg-card text-ink-body card-chrome hover:bg-canvas-soft transition-colors disabled:opacity-40"
+              >
+                {s}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
@@ -240,7 +247,7 @@ export function ChatPanel({
           placeholder={
             apiKeysMissing
               ? "Add API keys to .env first…"
-              : "What kind of movie are you in the mood for?"
+              : "🍿 What are you in the mood for today?"
           }
           disabled={loading || apiKeysMissing}
           className="bg-background border-border focus-visible:ring-ring"
